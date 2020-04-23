@@ -54,3 +54,8 @@ dkms.conf
 # Vim swap files
 *.swp
 *.swo
+
+# Dirs
+out
+tags
+.vscode
