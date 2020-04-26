@@ -1,10 +1,10 @@
 #ifndef SAVE_PRINCESSES_CORE_H
 #define SAVE_PRINCESSES_CORE_H
 
+#include <stdio.h>
 #include <unistd.h>
 
 typedef struct map *map_t;
-
 
 map_t fmake_map(FILE *map_file);
 

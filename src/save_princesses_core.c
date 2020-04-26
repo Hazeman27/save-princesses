@@ -84,7 +84,7 @@ struct map *fmake_map(FILE *map_file)
 	char span;
 
 	if (fscanf(map_file, "%ld %ld %ld", &rows, &cols, &drake_wake_time) != 3) {
-		perror(EMAPPRM);
+		perror(ERR_MSG_MAP_PARAMS);
 		return NULL;
 	}
 
@@ -100,7 +100,7 @@ struct map *fmake_map(FILE *map_file)
 		for (size_t j = 0; j < cols; j++) {
 
 			if (fscanf(map_file, " %c", &symbol) != 1) {
-				func_perror(EFSCANF);
+				func_perror(ERR_MSG_FSCANF);
 				free_map_cells(cells, rows);
 				return NULL;
 			}
@@ -108,7 +108,7 @@ struct map *fmake_map(FILE *map_file)
 			span = get_cell_span(symbol);
 
 			if (span < 0) {
-				func_perror(EINSVAL);
+				func_perror(ERR_MSG_CELL_SYM);
 				free_map_cells(cells, rows);
 				return NULL;
 			}
