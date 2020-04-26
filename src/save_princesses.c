@@ -82,7 +82,7 @@ static void scan_map_from_file(map_t map)
 		func_perror(ERR_MSG_FCLOSE);
 }
 
-static inline void start_iteraction_mode(void (*commands[])(map_t))
+static inline void start_interactive_mode(void (*commands[])(map_t))
 {
 	if (!commands)
 		return;
@@ -141,7 +141,7 @@ interactive_mode:
 	put_command(commands, CMD_SYM_SAVE_PRINCESSES, 	save_princesses);
 	put_command(commands, CMD_SYM_QUIT, 		quit);
 
-	start_iteraction_mode(commands);
+	start_interactive_mode(commands);
 quit:
 	return 0;
 }
