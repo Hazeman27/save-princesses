@@ -24,12 +24,31 @@ static inline void reset_map(map_t map)
 
 static void generate_map(map_t map)
 {
-	size_t rows, cols, drake_wake_time;
+	int rows, cols, drake_wake_time;
+	
+	printf(MSG_ENTER_NUM_ROWS_COLS);
 
-	if (scanf("%ld %ld %ld", &rows, &cols, &drake_wake_time) != 3) {
+	if (scanf("%d %d", &rows, &cols) != 2) {
 		func_perror(ERR_MSG_SCANFF);
 		return;		
-	}	
+	}
+	
+	if (rows < 0 || cols < 0) {
+		PERROR_NEG_ROWS_COLS;
+		return;
+	}
+
+	printf(MSG_ENTER_DRAKE_WAKE_T);
+
+	if (scanf("%d", &drake_wake_time) != 1) {
+		func_perror(ERR_MSG_SCANFF);
+		return;
+	}
+
+	if (drake_wake_time < 0) {
+		func_perror(ERR_MSG_NEG_VAL_DRAKE);
+		return;
+	}
 
 	reset_map(map);
 	map = gen_map(rows, cols, drake_wake_time);
@@ -71,7 +90,7 @@ static inline void start_iteraction_mode(void (*commands[])(map_t))
 	map_t map = NULL;
 	char input;
 
-	printf(MSG_ENTER_CMD);
+	printf(MSG_COMMANDS MSG_ENTER_CMD);
 
 	while (scanf("%c", &input) == 1) {
 		

@@ -9,6 +9,7 @@
 #define ERR_MSG_FOPEN 		"Could not open map file\n"
 #define ERR_MSG_MALLOC 		"Could not allocate memory\n"
 #define ERR_MSG_NEG_VAL		"Rows and cols cannot have negative value\n"
+#define ERR_MSG_NEG_VAL_DRAKE	"Drake wake time cannot be a negative value\n"
 #define ERR_MSG_MAP_PARAMS	"Could not read map parameters\n"
 #define ERR_MSG_READ_CELL_SYM	"Could not read cell symbol\n"
 #define ERR_MSG_FSCANF		"Failed to read from file\n"
