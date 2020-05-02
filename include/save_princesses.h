@@ -1,12 +1,23 @@
 #ifndef SAVE_PRINCESSES_H
 #define SAVE_PRINCESSES_H
 
+#include <unistd.h>
+
 #define MAP_PATH_MAX_L sizeof(unsigned char)
 
 /* Regular messages */
 
 #define MSG_MAP_NSPEC 		"Map file not specified.\n"
 #define MSG_INTERACTIVE 	"Switching to interactive mode...\n"
+
+/* Commands */
+
+#define CMD_SYM_HELP 		'h'
+#define CMD_SYM_GENERATE_MAP 	'g'
+#define CMD_SYM_ENTER_PATH 	'f'
+#define CMD_SYM_PRINT_MAP 	'p'
+#define CMD_SYM_SAVE_PRINCESSES 's'
+#define CMD_SYM_QUIT 		'q'
 
 #define CMD_1 "1. Print commands      [h]."
 #define CMD_2 "2. Generate map        [g]."
@@ -25,13 +36,12 @@
 #define MSG_ENTER_DRAKE_WAKE_T 	"Enter Drake's wake time parameter: "
 #define MSG_MAP_GENERATED 	"Map generated successfully...\n"
 
-/* Commands */
+#define FLAG_ASSERT_SHORT 	"-a"
+#define FLAG_VERBOSE_SHORT 	"-v"
+#define FLAG_ASSERT_FULL 	"--assert"
+#define FLAG_VERBOSE_FULL 	"--verbose"
 
-#define CMD_SYM_HELP 		'h'
-#define CMD_SYM_GENERATE_MAP 	'g'
-#define CMD_SYM_ENTER_PATH 	'f'
-#define CMD_SYM_PRINT_MAP 	'p'
-#define CMD_SYM_SAVE_PRINCESSES 's'
-#define CMD_SYM_QUIT 		'q'
+#define FLAG_SHORT_L 3
+#define FLAG_FULL_L 20
 
 #endif

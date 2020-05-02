@@ -1,9 +1,11 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "../include/save_princesses.h"
-#include "../include/save_princesses_error.h"
-#include "../include/save_princesses_core.h"
-#include "../include/save_princesses_cmd.h"
+#include "../include/error.h"
+#include "../include/core.h"
+#include "../include/cmd.h"
+#include "../include/core_assert.h"
 
 static void quit(map_t map)
 {
@@ -11,7 +13,7 @@ static void quit(map_t map)
 	exit(EXIT_SUCCESS);
 }
 
-static void print_help(map_t map)
+static inline void print_help(map_t map)
 {
 	printf(MSG_COMMANDS);	
 }
@@ -22,14 +24,14 @@ static inline void reset_map(map_t map)
 		free_map(map);
 }
 
-static void generate_map(map_t map)
+static inline void generate_map(map_t map)
 {
-	int rows, cols, drake_wake_time;
+	size_t rows, cols, drake_wake_time;
 	
 	printf(MSG_ENTER_NUM_ROWS_COLS);
 
-	if (scanf("%d %d", &rows, &cols) != 2) {
-		func_perror(ERR_MSG_SCANFF);
+	if (scanf("%ld %ld", &rows, &cols) != 2) {
+		eprintf(ERR_MSG_SCANFF);
 		return;		
 	}
 	
@@ -40,13 +42,13 @@ static void generate_map(map_t map)
 
 	printf(MSG_ENTER_DRAKE_WAKE_T);
 
-	if (scanf("%d", &drake_wake_time) != 1) {
-		func_perror(ERR_MSG_SCANFF);
+	if (scanf("%ld", &drake_wake_time) != 1) {
+		eprintf(ERR_MSG_SCANFF);
 		return;
 	}
 
 	if (drake_wake_time < 0) {
-		func_perror(ERR_MSG_NEG_VAL_DRAKE);
+		eprintf(ERR_MSG_NEG_VAL_DRAKE);
 		return;
 	}
 
@@ -59,19 +61,19 @@ static inline FILE *scan_map_file_path()
 	char path[MAP_PATH_MAX_L];
 	
 	if (scanf("%s", path) != 1) {
-		func_perror(ERR_MSG_SCANFF);
+		eprintf(ERR_MSG_SCANFF);
 		return NULL;
 	}
 
 	return fopen(path, "r");
 }
 
-static void scan_map_from_file(map_t map)
+static inline void scan_map_from_file(map_t map)
 {
 	FILE *map_file = scan_map_file_path();
 
 	if (!map_file) {
-		func_perror(ERR_MSG_FOPEN);
+		eprintf(ERR_MSG_FOPEN);
 		return;	
 	}
 
@@ -79,10 +81,10 @@ static void scan_map_from_file(map_t map)
 	map = fmake_map(map_file);
 
 	if (fclose(map_file) == EOF)
-		func_perror(ERR_MSG_FCLOSE);
+		eprintf(ERR_MSG_FCLOSE);
 }
 
-static inline void start_interactive_mode(void (*commands[])(map_t))
+static void start_interactive_mode(void (*commands[])(map_t))
 {
 	if (!commands)
 		return;
@@ -106,8 +108,46 @@ static inline void start_interactive_mode(void (*commands[])(map_t))
 	}
 }
 
+static inline
+bool isflag(const char *str, const char *flag_short_name, const char *flag_full_name)
+{
+	return (!strcmp(str, flag_short_name) || !strcmp(str, flag_full_name)); 
+}
+
+static void accept_program_flags(int argc, char **argv)
+{
+	if (argc < 2)
+		return;
+	
+	if (argc == 2 && isflag(argv[1], FLAG_ASSERT_SHORT, FLAG_ASSERT_FULL)) {
+		run_tests(false);
+		return;	
+	}
+	
+	bool verbose = false;
+	bool run = false;
+
+	for (int i = 1; i < argc; i++) {
+		
+		if (isflag(argv[i], FLAG_VERBOSE_SHORT, FLAG_VERBOSE_FULL))
+			verbose = true;
+		else if (isflag(argv[i], FLAG_ASSERT_SHORT, FLAG_ASSERT_FULL))
+			run = true;
+
+		if (run && verbose) {
+			run_tests(true);
+			break;
+		}
+	}
+
+	if (run)
+		run_tests(false);
+}
+
 int main(int argc, char **argv)
 {
+	accept_program_flags(argc, argv);
+
 	if (argc > 1) {
 		
 		FILE *map_file = fopen(argv[1], "r");
@@ -120,18 +160,16 @@ int main(int argc, char **argv)
 		map_t map = fmake_map(map_file);
 				
 		if (fclose(map_file) == EOF) {
-			func_perror(ERR_MSG_FCLOSE);
+			eprintf(ERR_MSG_FCLOSE);
 			return -1;
 		}
 
-		if (map)
-			save_princesses(map);
-		goto quit;
+		if (map) save_princesses(map);
+		return 0;
 	}
 
 interactive_mode:
 	printf(MSG_INTERACTIVE);
-
 	void (*commands[COMMANDS_TABLE_SIZE])(map_t) = { NULL };
 	
 	put_command(commands, CMD_SYM_HELP, 		print_help);
@@ -142,6 +180,5 @@ interactive_mode:
 	put_command(commands, CMD_SYM_QUIT, 		quit);
 
 	start_interactive_mode(commands);
-quit:
 	return 0;
 }

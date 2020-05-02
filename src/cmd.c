@@ -2,7 +2,7 @@
 #include <ctype.h>
 #include <stdarg.h>
 
-#include "../include/save_princesses_core.h"
+#include "../include/core.h"
 
 unsigned hash(char symbol)
 {
@@ -12,7 +12,8 @@ unsigned hash(char symbol)
 	return symbol - 'a';
 }
 
-void put_command(void (*commands[])(map_t), char symbol, const void (*command)(map_t))
+void put_command(void (*commands[])(map_t),
+		char symbol, const void (*command)(map_t))
 {
 	unsigned index = hash(symbol);
 
@@ -22,7 +23,8 @@ void put_command(void (*commands[])(map_t), char symbol, const void (*command)(m
 	commands[index] = command;
 }
 
-void (*get_command(void (*commands[])(map_t), char symbol))(map_t)
+void (*get_command(void (*commands[])(map_t),
+			char symbol))(map_t)
 {
 	unsigned index = hash(symbol);
 

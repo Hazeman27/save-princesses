@@ -1,19 +1,24 @@
-#include "../include/save_princesses_core_augmented.h"
-#include "../include/save_princesses_error.h"
+#include <string.h>
 
-static inline struct map *new_map(const struct map init)
+#include "../include/core_augmented.h"
+#include "../include/error.h"
+
+struct Map *new_map(size_t rows, size_t cols, size_t drake_wake_time, char *cells[])
 {
-	struct map *map = (struct map *) malloc(sizeof(struct map));
-
+	struct Map *map = (struct Map *) malloc(sizeof(struct Map) + sizeof(char *) * rows);
+	
 	if (!map) {
 		PERROR_MALLOC;
 		return NULL;
 	}
+	
+	*map = (struct Map) { rows, cols, drake_wake_time };
+	memmove(map->cells, cells, sizeof(char *) * rows);
 
-	return (*map = init, map);
+	return map;
 }
 
-static inline char get_cell_span(const char symbol)
+char get_cell_span(char symbol)
 {
 	switch (symbol) {
 		case ROAD: 
@@ -28,7 +33,7 @@ static inline char get_cell_span(const char symbol)
 	}
 }
 
-static inline char **new_map_cells(const size_t rows, const size_t cols)
+char **new_map_cells(size_t rows, size_t cols)
 {
 	if (rows < 0 || cols < 0) {
 		PERROR_NEG_ROWS_COLS;
@@ -45,7 +50,7 @@ static inline char **new_map_cells(const size_t rows, const size_t cols)
 	return cells;
 }
 
-static inline void free_map_cells(char **cells, const size_t rows)
+void free_map_cells(char *cells[], size_t rows)
 {
 	if (rows < 0) {
 		PERROR_NEG_ROWS_COLS;
@@ -60,7 +65,7 @@ static inline void free_map_cells(char **cells, const size_t rows)
 	free(cells); 
 }
 
-void free_map(struct map *map)
+void free_map(struct Map *map)
 {
 	if (!map)
 		return;
@@ -69,7 +74,7 @@ void free_map(struct map *map)
 	free(map);
 }
 
-struct map *fmake_map(FILE *map_file)
+struct Map *fmake_map(FILE *map_file)
 {
 	if (!map_file) {
 		perror("No map to scan");
@@ -100,7 +105,7 @@ struct map *fmake_map(FILE *map_file)
 		for (size_t j = 0; j < cols; j++) {
 
 			if (fscanf(map_file, " %c", &symbol) != 1) {
-				func_perror(ERR_MSG_FSCANF);
+				eprintf(ERR_MSG_FSCANF);
 				free_map_cells(cells, rows);
 				return NULL;
 			}
@@ -108,7 +113,7 @@ struct map *fmake_map(FILE *map_file)
 			span = get_cell_span(symbol);
 
 			if (span < 0) {
-				func_perror(ERR_MSG_CELL_SYM);
+				eprintf(ERR_MSG_CELL_SYM);
 				free_map_cells(cells, rows);
 				return NULL;
 			}
@@ -120,10 +125,10 @@ struct map *fmake_map(FILE *map_file)
 		fgetc(map_file);
 	}
 
-	return new_map((struct map) { rows, cols, drake_wake_time, cells });
+	return new_map(rows, cols, drake_wake_time, cells);
 }
 
-struct map *gen_map(const size_t rows, const size_t cols, const size_t drake_wake_time)
+struct Map *gen_map(size_t rows, size_t cols, size_t drake_wake_time)
 {
 	if (rows < 0 || cols < 0 || drake_wake_time < 0) {
 		PERROR_NEG_ROWS_COLS;
@@ -133,19 +138,23 @@ struct map *gen_map(const size_t rows, const size_t cols, const size_t drake_wak
 	return NULL;
 }
 
-void print_map(struct map *map)
+void print_map(const struct Map *map)
 {
 	if (!map)
 		return;
+	
+	printf("===> Map %ld x %ld <===\n", map->rows, map->cols);
 
 	for (size_t i = 0; i < map->rows; i++) {
 		for (size_t j = 0; j < map->cols; j++)
 			putchar(map->cells[i][j]);
 		putchar('\n');
 	}
+
+	printf("===> Drake wake time: %ld <===\n", map->drake_wake_time);
 }
 
-void save_princesses(const struct map *map)
+void save_princesses(const struct Map *map)
 {
 
 }

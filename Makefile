@@ -11,7 +11,7 @@ vpath %.h $(INC_DIR)
 sources := $(wildcard $(SRC_DIR)/*.c)
 objects := $(sources:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-$(OBJ_DIR)/%.o: %.c %.h save_princesses_error.h 
+$(OBJ_DIR)/%.o: %.c %.h error.h 
 	cc $(CFLAGS) -c $< -o $@
 
 $(OUT_DIR)/save_princesses: $(objects) | $(OUT_DIR)
