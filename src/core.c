@@ -1,4 +1,5 @@
 #include <string.h>
+#include <ctype.h>
 
 #include "../include/core_augmented.h"
 #include "../include/error.h"
@@ -40,11 +41,18 @@ char **new_map_cells(size_t rows, size_t cols)
 		return NULL;
 	}
 
-	char **cells = (char **) malloc(sizeof(char *) * rows * cols);
-
+	char **cells = (char **) malloc(sizeof(char *) * rows);
+	
 	if (!cells) {
 		PERROR_MALLOC;
 		return NULL;
+	}
+
+	for (size_t i = 0; i < rows; i++) {
+		if (!(cells[i] = (char *) calloc(cols, sizeof(char)))) {
+			PERROR_MALLOC;
+			return NULL;
+		}
 	}
 
 	return cells;
@@ -74,10 +82,10 @@ void free_map(struct Map *map)
 	free(map);
 }
 
-struct Map *fmake_map(FILE *map_file)
+struct Map *fmake_map(FILE **map_file)
 {
-	if (!map_file) {
-		perror("No map to scan");
+	if (!*map_file) {
+		eprintf("No map to scan");
 		return NULL;
 	}
 
@@ -88,23 +96,23 @@ struct Map *fmake_map(FILE *map_file)
 	char symbol;
 	char span;
 
-	if (fscanf(map_file, "%ld %ld %ld", &rows, &cols, &drake_wake_time) != 3) {
-		perror(ERR_MSG_MAP_PARAMS);
+	if (fscanf(*map_file, "%ld %ld %ld", &rows, &cols, &drake_wake_time) != 3) {
+		eprintf(ERR_MSG_MAP_PARAMS);
 		return NULL;
 	}
-
+	
 	char **cells = new_map_cells(rows, cols);
-
+	
 	if (!cells)
 		return NULL;
-
-	printf("%ld %ld\n", rows, cols);
 
 	for (size_t i = 0; i < rows; i++) {
 		
 		for (size_t j = 0; j < cols; j++) {
+			
+			while (isspace(symbol = fgetc(*map_file)));
 
-			if (fscanf(map_file, " %c", &symbol) != 1) {
+			if (symbol == EOF) {
 				eprintf(ERR_MSG_FSCANF);
 				free_map_cells(cells, rows);
 				return NULL;
@@ -120,12 +128,10 @@ struct Map *fmake_map(FILE *map_file)
 
 			cells[i][j] = symbol;
 		}
-
-		printf("%s\n", cells[i]);
-		fgetc(map_file);
 	}
 
-	return new_map(rows, cols, drake_wake_time, cells);
+	struct Map *map = new_map(rows, cols, drake_wake_time, cells);
+	return map;
 }
 
 struct Map *gen_map(size_t rows, size_t cols, size_t drake_wake_time)
@@ -140,14 +146,21 @@ struct Map *gen_map(size_t rows, size_t cols, size_t drake_wake_time)
 
 void print_map(const struct Map *map)
 {
-	if (!map)
+	if (!map) {
+		eprintf("No map to print");
 		return;
+	}
 	
-	printf("===> Map %ld x %ld <===\n", map->rows, map->cols);
+	char delimeter = ' ';
 
+	if (map->cols > 30)
+		delimeter = 0;
+
+	printf("===> Map %ld x %ld <===\n", map->rows, map->cols);
+	
 	for (size_t i = 0; i < map->rows; i++) {
 		for (size_t j = 0; j < map->cols; j++)
-			putchar(map->cells[i][j]);
+			printf("%c%c", map->cells[i][j], delimeter);
 		putchar('\n');
 	}
 

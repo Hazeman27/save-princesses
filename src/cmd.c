@@ -4,7 +4,7 @@
 
 #include "../include/core.h"
 
-unsigned hash(char symbol)
+char hash(char symbol)
 {
 	if (!islower(symbol))
 	       return -1;
@@ -12,23 +12,21 @@ unsigned hash(char symbol)
 	return symbol - 'a';
 }
 
-void put_command(void (*commands[])(map_t),
-		char symbol, const void (*command)(map_t))
+void put_command(void (*commands[])(map_t *), char symbol, const void (*command)(map_t *))
 {
-	unsigned index = hash(symbol);
+	char index = hash(symbol);
 
-	if (!commands || (int) index < 0 || commands[index])
+	if (!commands || index < 0 || commands[index])
 		return;
 
 	commands[index] = command;
 }
 
-void (*get_command(void (*commands[])(map_t),
-			char symbol))(map_t)
+void (*get_command(void (*commands[])(map_t *), char symbol))(map_t *)
 {
-	unsigned index = hash(symbol);
+	char index = hash(symbol);
 
-	if (!commands || (int) index < 0)
+	if (!commands || index < 0)
 		return NULL;
 
 	return commands[index];

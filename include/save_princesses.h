@@ -3,7 +3,7 @@
 
 #include <unistd.h>
 
-#define MAP_PATH_MAX_L sizeof(unsigned char)
+#define MAP_PATH_MAX_L 256
 
 /* Regular messages */
 
@@ -21,7 +21,7 @@
 
 #define CMD_1 "1. Print commands      [h]."
 #define CMD_2 "2. Generate map        [g]."
-#define CMD_3 "3. Enter map file path [f]."
+#define CMD_3 "3. Enter map file path [f [filepath]]."
 #define CMD_4 "4. Print current map   [p]."
 #define CMD_5 "5. Save princesses     [s]."
 #define CMD_6 "6. Quit                [q]."

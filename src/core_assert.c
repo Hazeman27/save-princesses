@@ -172,14 +172,16 @@ void map_allocation_test(size_t rows, size_t cols, size_t drake_wake_time, bool 
 	}
 }
 
-static void run_map_allocation_test(bool verbose, int amount, ...)
+static void run_map_allocation_test(bool verbose, int runs_count, ...)
 {
-	assert(amount >= 0);
+	assert(runs_count >= 0);
+	
+	int argc = runs_count * 3;
 
 	va_list args;
-	va_start(args, amount);
+	va_start(args, argc);
 	
-	for (int i = 0; i < amount; i++) {
+	for (int i = 0; i < argc; i += 3) {
 		map_allocation_test(
 				va_arg(args, size_t),
 				va_arg(args, size_t),
@@ -192,5 +194,5 @@ static void run_map_allocation_test(bool verbose, int amount, ...)
 
 void run_tests(bool verbose)
 {
-	run_map_allocation_test(verbose, 2, 10, 10, 5, 100, 100, 7);
+	run_map_allocation_test(verbose, 2, 5, 10, 10, 7, 100, 100);
 }

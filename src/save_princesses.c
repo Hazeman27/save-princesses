@@ -7,13 +7,13 @@
 #include "../include/cmd.h"
 #include "../include/core_assert.h"
 
-static void quit(map_t map)
+static void quit(map_t *map)
 {
-	free_map(map);
+	free_map(*map);
 	exit(EXIT_SUCCESS);
 }
 
-static inline void print_help(map_t map)
+static inline void print_help(map_t *map)
 {
 	printf(MSG_COMMANDS);	
 }
@@ -24,14 +24,14 @@ static inline void reset_map(map_t map)
 		free_map(map);
 }
 
-static inline void generate_map(map_t map)
+static inline void generate_map(map_t *map)
 {
 	size_t rows, cols, drake_wake_time;
 	
 	printf(MSG_ENTER_NUM_ROWS_COLS);
 
 	if (scanf("%ld %ld", &rows, &cols) != 2) {
-		eprintf(ERR_MSG_SCANFF);
+		eprintf(ERR_MSG_SCANF);
 		return;		
 	}
 	
@@ -43,7 +43,7 @@ static inline void generate_map(map_t map)
 	printf(MSG_ENTER_DRAKE_WAKE_T);
 
 	if (scanf("%ld", &drake_wake_time) != 1) {
-		eprintf(ERR_MSG_SCANFF);
+		eprintf(ERR_MSG_SCANF);
 		return;
 	}
 
@@ -52,39 +52,44 @@ static inline void generate_map(map_t map)
 		return;
 	}
 
-	reset_map(map);
-	map = gen_map(rows, cols, drake_wake_time);
+	reset_map(*map);
+	*map = gen_map(rows, cols, drake_wake_time);
 }
 
-static inline FILE *scan_map_file_path()
+static inline void scan_map_from_file(map_t *map)
 {
 	char path[MAP_PATH_MAX_L];
 	
 	if (scanf("%s", path) != 1) {
-		eprintf(ERR_MSG_SCANFF);
-		return NULL;
+		eprintf(ERR_MSG_SCANF);
+		return;
 	}
 
-	return fopen(path, "r");
-}
-
-static inline void scan_map_from_file(map_t map)
-{
-	FILE *map_file = scan_map_file_path();
+	FILE *map_file = fopen(path, "r");
 
 	if (!map_file) {
 		eprintf(ERR_MSG_FOPEN);
 		return;	
-	}
+	}	
 
-	reset_map(map);
-	map = fmake_map(map_file);
-
-	if (fclose(map_file) == EOF)
+	reset_map(*map);
+	*map = fmake_map(&map_file);
+	
+	if (fclose(map_file))
 		eprintf(ERR_MSG_FCLOSE);
 }
 
-static void start_interactive_mode(void (*commands[])(map_t))
+static void run_save_princesses(map_t *map)
+{
+	save_princesses(*map);
+}
+
+static void run_print_map(map_t *map)
+{
+	print_map(*map);
+}
+
+static void start_interactive_mode(void (*commands[])(map_t *))
 {
 	if (!commands)
 		return;
@@ -99,12 +104,12 @@ static void start_interactive_mode(void (*commands[])(map_t))
 		if (input == '\n')
 			continue;
 
-		void (*command)(map_t) = get_command(commands, input);
+		void (*command)(map_t *) = get_command(commands, input);
 		
 		if (command)
-			command(map);
+			command(&map);
 
-		printf(MSG_ENTER_CMD);	
+		printf("\nsave_princesses>");	
 	}
 }
 
@@ -157,26 +162,30 @@ int main(int argc, char **argv)
 			goto interactive_mode;
 		}
 		
-		map_t map = fmake_map(map_file);
+		map_t map = fmake_map(&map_file);
 				
 		if (fclose(map_file) == EOF) {
 			eprintf(ERR_MSG_FCLOSE);
 			return -1;
 		}
 
-		if (map) save_princesses(map);
+		if (map) {
+			save_princesses(map);
+			free_map(map);
+		}
+
 		return 0;
 	}
 
 interactive_mode:
 	printf(MSG_INTERACTIVE);
-	void (*commands[COMMANDS_TABLE_SIZE])(map_t) = { NULL };
+	void (*commands[COMMANDS_TABLE_SIZE])(map_t *) = { NULL };
 	
 	put_command(commands, CMD_SYM_HELP, 		print_help);
 	put_command(commands, CMD_SYM_GENERATE_MAP, 	generate_map);
 	put_command(commands, CMD_SYM_ENTER_PATH, 	scan_map_from_file);
-	put_command(commands, CMD_SYM_PRINT_MAP, 	print_map);
-	put_command(commands, CMD_SYM_SAVE_PRINCESSES, 	save_princesses);
+	put_command(commands, CMD_SYM_PRINT_MAP, 	run_print_map);
+	put_command(commands, CMD_SYM_SAVE_PRINCESSES, 	run_save_princesses);
 	put_command(commands, CMD_SYM_QUIT, 		quit);
 
 	start_interactive_mode(commands);

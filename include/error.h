@@ -13,11 +13,11 @@
 #define ERR_MSG_MAP_PARAMS	"Could not read map parameters"
 #define ERR_MSG_READ_CELL_SYM	"Could not read cell symbol"
 #define ERR_MSG_FSCANF		"Failed to read from file"
-#define ERR_MSG_SCANFF 		"Failed to scan input"
+#define ERR_MSG_SCANF 		"Failed to scan input"
 #define ERR_MSG_CELL_SYM 	"Incorrect symbol"
 #define ERR_MSG_FCLOSE 		"Could not close file"
 
-#define eprintf(message) (fprintf(stderr, "%s: " message, __func__))
+#define eprintf(message) (fprintf(stderr, "%s: " message "\n", __func__))
 
 #define PERROR_MALLOC (eprintf(ERR_MSG_MALLOC))
 

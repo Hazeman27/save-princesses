@@ -29,7 +29,7 @@ void free_map_cells(char *cells[], size_t rows);
 
 void free_map(struct Map *map);
 
-struct Map *fmake_map(FILE *map_file);
+struct Map *fmake_map(FILE **map_file);
 
 struct Map *gen_map(size_t rows, size_t cols, size_t drake_wake_time);
 
