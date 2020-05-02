@@ -16,6 +16,8 @@
 #define ERR_MSG_SCANF 		"Failed to scan input"
 #define ERR_MSG_CELL_SYM 	"Incorrect symbol"
 #define ERR_MSG_FCLOSE 		"Could not close file"
+#define ERR_MSG_NO_MAP_FILE	"No map file to read..."
+#define ERR_MSG_NO_MAP_PRINT	"No map to print..."
 
 #define eprintf(message) (fprintf(stderr, "%s: " message "\n", __func__))
 

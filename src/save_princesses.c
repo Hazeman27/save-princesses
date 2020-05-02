@@ -56,6 +56,7 @@ static inline void generate_map(map_t *map)
 	*map = gen_map(rows, cols, drake_wake_time);
 }
 
+
 static inline void scan_map_from_file(map_t *map)
 {
 	char path[MAP_PATH_MAX_L];
@@ -73,7 +74,7 @@ static inline void scan_map_from_file(map_t *map)
 	}	
 
 	reset_map(*map);
-	*map = fmake_map(&map_file);
+	*map = fmake_map(map_file);
 	
 	if (fclose(map_file))
 		eprintf(ERR_MSG_FCLOSE);
@@ -162,7 +163,7 @@ int main(int argc, char **argv)
 			goto interactive_mode;
 		}
 		
-		map_t map = fmake_map(&map_file);
+		map_t map = fmake_map(map_file);
 				
 		if (fclose(map_file) == EOF) {
 			eprintf(ERR_MSG_FCLOSE);

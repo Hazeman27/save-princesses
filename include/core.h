@@ -6,7 +6,7 @@
 
 typedef struct Map *map_t;
 
-map_t fmake_map(FILE **map_file);
+map_t fmake_map(FILE *map_file);
 
 map_t gen_map(size_t rows, size_t cols, size_t drake_wake_time);
  
