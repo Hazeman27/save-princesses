@@ -18,8 +18,10 @@
 #define ERR_MSG_FCLOSE 		"Could not close file"
 #define ERR_MSG_NO_MAP_FILE	"No map file to read..."
 #define ERR_MSG_NO_MAP_PRINT	"No map to print..."
+#define ERR_MSG_PRINCESSES_MAX_COUNT_EXCEEDED "Too many princesses on the map"
+#define ERR_MSG_MULTI_DRAKE_DEFS "Multiple drakes are not allowed"
 
-#define eprintf(message) (fprintf(stderr, "%s: " message "\n", __func__))
+#define eprintf(message) (fprintf(stderr, "%s: %s\n", __func__, message))
 
 #define PERROR_MALLOC (eprintf(ERR_MSG_MALLOC))
 

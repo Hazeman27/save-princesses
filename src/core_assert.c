@@ -1,8 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <assert.h>
-#include <stdbool.h>
 #include <stdarg.h>
+#include <string.h>
 
 #include "../include/core_augmented.h"
 
@@ -95,7 +93,7 @@ _static_always_inline void _print_map_t_ptr(struct Map *var, const char *var_nam
 
 _static_always_inline void _print_map_t(struct Map var, const char *var_name) {
 	printf("struct Map %s = {\n\t.rows = %ld,\n\t.cols = %ld,\n\t.drake_wake_time = %ld\n}",
-					var_name, var.rows, var.cols, var.drake_wake_time);
+			var_name, var.rows, var.cols, var.drake_wake_time);
 }
 
 _static_always_inline void _print_default(void *var, const char *var_name) {
@@ -130,6 +128,10 @@ _static_always_inline void _print_default(void *var, const char *var_name) {
 
 #define MAP_ALLOCATION_TEST_ARGC 3
 
+_static_always_inline char *iscell(char symbol) {
+	return strchr(CELLS, symbol);
+}
+
 static inline void check_map_against_char(const struct Map *map, char c)
 {
 	assert(map != NULL);
@@ -140,17 +142,8 @@ static inline void check_map_against_char(const struct Map *map, char c)
 	}
 }	
 
-static inline
-void map_allocation_test(size_t rows, size_t cols, size_t drake_wake_time, bool verbose)
+static inline void map_allocation_test(size_t rows, size_t cols, size_t drake_wake_time, bool verbose)
 {
-	if (verbose) {
-		printf(TEST_ARGS_LABEL);
-		print_var(rows, ",\n");
-		print_var(cols, ",\n");
-		print_var(drake_wake_time, "\n");
-		printf(SEPARATOR);
-	}
-
 	char *cells[rows];
 	alloc_map_cells(cells, rows, cols);
 
@@ -161,31 +154,65 @@ void map_allocation_test(size_t rows, size_t cols, size_t drake_wake_time, bool 
 
 	struct Map *map = new_map(rows, cols, drake_wake_time, cells);
 
-	assert(map != NULL && map->rows == rows && map->cols == cols
+	assert(map && map->rows == rows && map->cols == cols
 			&& map->drake_wake_time == drake_wake_time);
-	
+
 	check_map_against_char(map, ROAD);
 
 	if (verbose) print_map(map);
 	free_map(map);
 }
 
-static void run_map_allocation_test(bool verbose, int runs_count, ...)
+static inline void gen_map_test(size_t rows, size_t cols, size_t drake_wake_time, bool verbose)
+{
+	struct Map *map = gen_map(rows, cols, drake_wake_time);
+	assert(map && map->rows == rows && map-> cols == cols
+			&& map->drake_wake_time == drake_wake_time);
+	
+	int princesses_count = 0;
+	bool drake_is_set = false;
+
+	for (size_t i = 0; i < rows; i++) {
+		for (size_t j = 0; j < cols; j++) {
+			assert(validate_cell(map->cells[i][j], &princesses_count, &drake_is_set, true));
+		}
+	}
+
+	if (verbose) print_map(map);
+	free_map(map);
+}
+
+static void run_3size_t_arg_test(
+		void (*test)(size_t, size_t, size_t, bool),
+		const char *test_name,
+		bool verbose,
+		int runs_count, ...)
 {
 	assert(runs_count >= 0);
 	int argc = runs_count * MAP_ALLOCATION_TEST_ARGC;
 
 	va_list args;
 	va_start(args, argc);
-	
+
 	for (int i = 0; i < argc; i += MAP_ALLOCATION_TEST_ARGC) {	
-		print_test_label(_to_string(map_allocation_test));
-		map_allocation_test(
-				va_arg(args, size_t),
-				va_arg(args, size_t),
-				va_arg(args, size_t),
-				verbose);
-		printf(SEPARATOR "\n");
+	
+		size_t rows = va_arg(args, size_t);
+		size_t cols = va_arg(args, size_t);
+		size_t drake_wake_time = va_arg(args, size_t);
+
+		if (verbose) {
+			print_test_label(test_name);
+			printf(TEST_ARGS_LABEL);
+			print_var(rows, ",\n");
+			print_var(cols, ",\n");
+			print_var(drake_wake_time, "\n");
+			printf(SEPARATOR);	
+		}
+
+		test(rows, cols, drake_wake_time, verbose);
+		
+		if (verbose)
+			printf(SEPARATOR "\n");
 	}
 
 	va_end(args);
@@ -193,5 +220,15 @@ static void run_map_allocation_test(bool verbose, int runs_count, ...)
 
 void run_tests(bool verbose)
 {
-	run_map_allocation_test(verbose, 2, 5, 10, 10, 7, 100, 100);
+	run_3size_t_arg_test(
+			map_allocation_test,
+			_to_string(map_allocation_test),
+			verbose,
+			2, 5, 10, 10, 7, 100, 100);
+
+	run_3size_t_arg_test(
+			gen_map_test,
+			_to_string(gen_map_test),
+			verbose,
+			2, 4, 7, 7, 12, 34, 27);
 }
