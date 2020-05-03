@@ -65,12 +65,19 @@ char validate_cell(char cell, int *princesses_count, bool *drake_is_set, bool ve
 	return (error_message ? -1 : cell);
 }
 
+#define print_delta_time(stream, delta_time) \
+	(fprintf((stream), "> Execution of %s took %ld ns\n", __func__, (delta_time)))
+
+_always_inline void record_timestamp(struct timespec *timespec)
+{
+	if (clock_gettime(CLOCK_REALTIME, timespec) < 0)
+		eprintf(ERR_MSG_CLOCK_GETTIME);
+}
+
 _always_inline long calc_delta_time(struct timespec start, struct timespec end) {
 	return end.tv_nsec - start.tv_nsec;
 }
 
-#define print_delta_time(stream, delta_time) \
-	(fprintf((stream), "> Execution of %s took %ld ns\n", __func__, (delta_time)))
 
 struct Map *new_map(size_t rows, size_t cols, size_t drake_wake_time, char *cells[]);
 
