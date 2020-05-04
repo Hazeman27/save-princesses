@@ -1,4 +1,4 @@
-CFLAGS = -g -O2 -Wall -I./include
+CFLAGS = -g -O2 -Wall -Iinclude
 CC = gcc
 
 SRC_DIR := src
@@ -18,12 +18,15 @@ $(OBJ_DIR)/%.o: %.c %.d
 	$(CC) $(CFLAGS) -c $< -o $@ 
 
 $(DEP_DIR)/%.d: %.c
-	$(CC) -MM $(CFLAGS) $< -o $@
+	@set -e; rm -f $@; \
+	$(CC) -M $(CFLAGS) $< > $@.$$$$; \
+	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
 
 $(OUT_DIR)/save_princesses: $(objects) | $(OUT_DIR)
 	$(CC) $(CFLAGS) $^ -o $@
 
--include $(deps)
+include $(deps)
 
 $(objects): | $(OBJ_DIR)
 $(deps): | $(DEP_DIR)

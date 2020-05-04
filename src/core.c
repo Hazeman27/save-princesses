@@ -1,5 +1,4 @@
-#include <string.h>
-#include <time.h>
+#include <pthread.h>
 
 #include "../include/core_augmented.h"
 
@@ -112,18 +111,11 @@ struct Map *fmake_map(FILE *map_file)
 
 struct Map *gen_map(size_t rows, size_t cols, size_t drake_wake_time)
 {
-	srand(time(0));
-	
-	/**
-	 * Duplicate elements to increase probability of
-	 * cell being that type
-	 */
+	const char regular_cell_types[] = {
+		ROAD, ROAD, BUSH, WALL
+	};
 
-	char cell_types[] = { ROAD, ROAD, ROAD, ROAD, BUSH, BUSH, WALL, WALL, DRAKE, PRINCESS };
-	char first_row_cell_types = { ROAD, ROAD, BUSH, WALL };
-
-	int cell_types_amount = strlen(cell_types);
-	int first_row_cell_types_amount = strlen(first_row_cell_types);
+	int regular_cell_types_amount = sizeof(regular_cell_types);
 
 	char *cells[rows];
 	alloc_map_cells(cells, rows, cols + 1);
@@ -132,47 +124,29 @@ struct Map *gen_map(size_t rows, size_t cols, size_t drake_wake_time)
 		return NULL;
 	
 	/**
-	 * princesses_count - Count amount of princesses,
+	 * princesses_count - Amount of princesses,
 	 * max allowed amount is specified by
 	 * PRINCESSES_MAX_COUNT in the header file
 	 * core_augmented.h
-	 *
-	 * drake_is_set - check if DRAKE was already set,
-	 * max allowed amount of drakes is 1
 	 */
 
-	int princesses_count = 0;
-	bool drake_is_set = false;
+	int princesses_count = rand() % PRINCESSES_MAX_COUNT + 1;
 	
-	char cell;
-
 	for (size_t i = 0; i < rows; i++) {
-		for (size_t j = 0; j < cols; j++) {
-			
-			/**
-			 * If on the first row, then use separate set of cells
-			 * to prevent early generation of DRAKE and PRINCESS
-			 * types
-			 */
-
-			if (i == 0) {
-				cell = first_row_cell_types[rand() % first_row_cell_types_amount];
-				continue;
-			}
-			
-			/**
-			 * If cell is PRINCESS and princesses max amount is
-			 * already reached or cell is DRAKE and drake is
-			 * already set, then keep selecting random cell types
-			 */
-
-			do {
-				cell = cell_types[rand() % cell_types_amount];
-			} while (validate_cell(cell, &princesses_count, &drake_is_set, false) < 0);
-			
-			cells[i][j] = cell;
-		}
+		for (size_t j = 0; j < cols; j++)
+			cells[i][j] = regular_cell_types[rand() % regular_cell_types_amount];
 	}
+
+	for (size_t i = 0; i < princesses_count; i++)
+		cells[rand() % rows][rand() % cols] = PRINCESS;
+	
+	/**
+	 * To assure presence of the DRAKE put hime into
+	 * random cell of the map after generation of
+	 * other cells
+	 */
+
+	cells[rand() % rows][rand() % cols] = DRAKE;
 
 	struct Map *map = new_map(rows, cols, drake_wake_time, cells);
 	return map;
@@ -201,13 +175,14 @@ void print_map(const struct Map *map)
 	printf("===> Drake wake time: %ld <===\n", map->drake_wake_time);
 }
 
-_static_always_inline int count_princesses(char *cells[], size_t rows, size_t cols)
+_static_always_inline int count_princesses(struct Map *map)
 {
 	int count = 0;
 
-	for (size_t i = 0; i < rows; i++) {
-		for (size_t j = 0; j < cols; j++) {
-			if (cells[i][j] == PRINCESS)
+	for (size_t i = 0; i < map->rows; i++) {
+		for (size_t j = 0; j < map->cols; j++) {
+
+			if (map->cells[i][j] == PRINCESS)
 				count++;
 		}
 	}
@@ -215,49 +190,43 @@ _static_always_inline int count_princesses(char *cells[], size_t rows, size_t co
 	return count;
 }
 
-_static_always_inline int *get_drake_position(char *cells[], size_t rows, size_t cols)
+_static_always_inline int find_drake_position(struct Map *map, int drake_position[])
 {
-	for (size_t i = 0; i < rows; i++) {
-		for (size_t j = 0; j < cols; j++) {
-			if (cells[i][j] == DRAKE) {
-				
-				int *position = (int *) malloc(sizeof(int) * 2);
-				
-				if (!position)
-					return NULL;
-				
-				position[0] = i;
-				position[1] = j;
-				
-				return position;
-			}
+	for (size_t i = 0; i < map->rows; i++) {	
+		for (size_t j = 0; j < map->cols; j++) {
+
+			if (map->cells[i][j] == DRAKE)
+				return drake_position[0] = i, drake_position[1] = j, 0;
 		}
 	}
 
-	return NULL;
+	return -1;
 }
 
 void save_princesses(struct Map *map)
 {
 	if (!map)
 		return;
+	
+	printf("Starting saving of princesses...\n");
 
 	struct timespec start, end;
-	record_timestamp(&start);
-	
-	int princesses_count = count_princesses(map->cells, map->rows, map->cols);
+
+	record_timestamp(&start);	
+	int princesses_count = count_princesses(map);
 
 	record_timestamp(&end);
 	print_delta_time(stdout, calc_delta_time(start, end));
 	
 	printf("Princesses count: %d\n", princesses_count);
 	
+	int drake_position[2] = { -1, -1 };
+
 	record_timestamp(&start);	
-	int *drake_position = get_drake_position(map->cells, map->rows, map->cols);
+	find_drake_position(map, drake_position);
 
 	record_timestamp(&end);
 	print_delta_time(stdout, calc_delta_time(start, end));
 	
-	if (drake_position)
-		printf("Drake is located at: [row: %d, col: %d]\n", drake_position[0], drake_position[1]);
+	printf("Drake is located at: [row: %d, col: %d]\n", drake_position[0], drake_position[1]);
 }

@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <time.h>
 
 typedef struct Map *map_t;
 

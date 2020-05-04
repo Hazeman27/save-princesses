@@ -4,14 +4,20 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <string.h>
+#include <time.h>
 
 #include "error.h"
 
-#define ROAD 		'C'
-#define BUSH 		'H'
-#define WALL 		'N'
+#define ROAD 		' '
+#define BUSH 		'@'
+#define WALL 		'#'
 #define DRAKE 		'D'
 #define PRINCESS 	'P'
+
+#define ROAD_ALT	'C'
+#define BUSH_ALT	'H'
+#define WALL_ALT	'N'
 
 #define CELLS "CHNDP"
 #define PRINCESSES_MAX_COUNT 5
@@ -30,9 +36,15 @@ struct Map {
 _always_inline char get_cell_span(char cell)
 {
 	switch (cell) {
-		case ROAD: case WALL: case DRAKE: case PRINCESS:
+		case ROAD_ALT:
+		case WALL_ALT:
+		case ROAD:
+		case WALL:
+		case DRAKE:
+		case PRINCESS:
 			return 1;
 		case BUSH:
+		case BUSH_ALT:
 			return 2;
 		default:
 			return -1;

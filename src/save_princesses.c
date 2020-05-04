@@ -179,7 +179,9 @@ int main(int argc, char **argv)
 	}
 
 interactive_mode:
+	srand(time(0));	
 	printf(MSG_INTERACTIVE);
+
 	void (*commands[COMMANDS_TABLE_SIZE])(map_t *) = { NULL };
 	
 	put_command(commands, CMD_SYM_HELP, 		print_help);
