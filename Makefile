@@ -1,4 +1,4 @@
-CFLAGS = -g -O3 -Wall -Iinclude
+CFLAGS = -g -O3 -Wall -I./include
 CC = gcc
 
 SRC_DIR := src
@@ -14,17 +14,23 @@ sources := $(wildcard $(SRC_DIR)/*.c)
 objects := $(sources:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 deps := $(sources:$(SRC_DIR)/%.c=$(DEP_DIR)/%.d)
 
+tests_obj := tests.o
+main_obj := save_princesses.o
+
 $(OBJ_DIR)/%.o: %.c %.d
 	$(CC) $(CFLAGS) -c $< -o $@ 
 
 $(DEP_DIR)/%.d: %.c
 	@set -e; rm -f $@; \
-	$(CC) -M $(CFLAGS) $< > $@.$$$$; \
+	$(CC) -MM $(CFLAGS) $< > $@.$$$$; \
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
-$(OUT_DIR)/save_princesses: $(objects) | $(OUT_DIR)
-	$(CC) $(CFLAGS) $^ -o $@
+main: $(filter-out $(OBJ_DIR)/$(tests_obj), $(objects)) | $(OUT_DIR)
+	$(CC) $(CFLAGS) $^ -o $(OUT_DIR)/save_princesses
+
+tests: $(filter-out $(OBJ_DIR)/$(main_obj), $(objects)) | $(OUT_DIR)
+	$(CC) $(CFLAGS) $^ -o $(OUT_DIR)/$@
 
 include $(deps)
 

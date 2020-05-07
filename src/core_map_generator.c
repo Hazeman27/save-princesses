@@ -1,6 +1,6 @@
-#include "../include/core_map_generator.h"
-#include "../include/core_utils.h"
-#include "../include/stack.h"
+#include "core_map_generator.h"
+#include "core_utils.h"
+#include "stack.h"
 
 #define DIRECTIONS_COUNT 4
 #define PATH_WIDTH 2
@@ -235,11 +235,11 @@ struct Map *generate_map(int rows, int cols, int drake_wake_time)
 	set_roads(path);
 	set_princesses(path);
 	set_drake(path);
-
-	free(path->stack);	
-	for (row = 0; row < path->map->rows; row++)
+	
+	for (row = 0; row < rows; row++)
 		free(path->visited[row]);
-
+	
+	free(path->stack);
 	return path->map;
 
 stack_failure:

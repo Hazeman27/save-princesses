@@ -34,12 +34,4 @@
 #define MSG_ENTER_DRAKE_WAKE_T 	"Enter Drake's wake time parameter: "
 #define MSG_MAP_GENERATED 	"Map generated successfully...\n"
 
-#define FLAG_ASSERT_SHORT 	"-a"
-#define FLAG_VERBOSE_SHORT 	"-v"
-#define FLAG_ASSERT_FULL 	"--assert"
-#define FLAG_VERBOSE_FULL 	"--verbose"
-
-#define FLAG_SHORT_L 3
-#define FLAG_FULL_L 20
-
 #endif

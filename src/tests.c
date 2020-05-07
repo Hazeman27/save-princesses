@@ -2,7 +2,13 @@
 #include <stdarg.h>
 #include <string.h>
 
-#include "../include/core_augmented.h"
+#include "core_augmented.h"
+
+#define FLAG_VERBOSE_SHORT 	"-v"
+#define FLAG_VERBOSE_FULL 	"--verbose"
+
+#define FLAG_SHORT_L 3
+#define FLAG_FULL_L 20
 
 #define SEPARATOR "----------------------\n"
 #define TEST_ARGS_LABEL "> Arguments:\n"
@@ -10,6 +16,12 @@
 #define print_test_label(test_name) (printf("> Running: %s\n", (test_name)))
 
 #define _to_string(var) #var
+
+struct _run_3int_test_args {
+	void (*test)(int, int, int, bool);
+	const char *test_name;
+	bool verbose;
+};
 
 _static_always_inline void _print_bool(bool var, const char *var_name) {
 	printf("bool %s = %s", var_name, (var ? "true" : "false"));
@@ -58,13 +70,11 @@ _static_always_inline void _print_default(void *var, const char *var_name) {
 	printf(append);						\
 }
 
-#define MAP_ALLOCATION_TEST_ARGC 3
-
 _static_always_inline char *iscell(char symbol) {
 	return strchr(CELLS, symbol);
 }
 
-static inline void check_map_against_char(const struct Map *map, char c)
+_static_always_inline void check_map_against_char(const struct Map *map, char c)
 {
 	assert(map != NULL);
 
@@ -84,10 +94,10 @@ void map_allocation_test(int rows, int cols, int drake_wake_time, bool verbose)
 
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < cols; j++)
-			map->cells[i][j] = ROAD;
+			map->cells[i][j] = BUSH;
 	}
 
-	check_map_against_char(map, ROAD);
+	check_map_against_char(map, BUSH);
 
 	if (verbose)
 		print_map(map);
@@ -117,27 +127,23 @@ void generate_map_test(int rows, int cols, int drake_wake_time, bool verbose)
 	free_map(map);
 }
 
-static void run_3int_arg_test(
-		void (*test)(int, int, int, bool),
-		const char *test_name,
-		bool verbose,
-		int runs_count, ...)
+static void run_3int_arg_test(struct _run_3int_test_args args, int argc, ...)
 {
-	assert(runs_count >= 0);
+	assert(argc >= 0);
 
-	int argc = runs_count * 3;
-	va_list args;
+	argc *= 3;
+	va_list test_args;
 
-	va_start(args, argc);
+	va_start(test_args, argc);
 
 	for (int i = 0; i < argc; i += 3) {	
 	
-		int rows = va_arg(args, int);
-		int cols = va_arg(args, int);
-		int drake_wake_time = va_arg(args, int);
+		int rows = va_arg(test_args, int);
+		int cols = va_arg(test_args, int);
+		int drake_wake_time = va_arg(test_args, int);
 
-		if (verbose) {
-			print_test_label(test_name);
+		if (args.verbose) {
+			print_test_label(args.test_name);
 			printf(TEST_ARGS_LABEL);
 			print_var(rows, ",\n");
 			print_var(cols, ",\n");
@@ -145,26 +151,55 @@ static void run_3int_arg_test(
 			printf(SEPARATOR);	
 		}
 
-		test(rows, cols, drake_wake_time, verbose);
+		args.test(rows, cols, drake_wake_time, args.verbose);
 		
-		if (verbose)
+		if (args.verbose)
 			printf(SEPARATOR "\n");
 	}
 
-	va_end(args);
+	va_end(test_args);
 }
 
-void run_tests(bool verbose)
-{
-	run_3int_arg_test(
-			map_allocation_test,
-			_to_string(map_allocation_test),
-			verbose,
-			2, 5, 10, 10, 7, 100, 100);
+_static_always_inline
+bool isflag(const char *str, const char *short_name, const char *full_name) {
+	return (!strcmp(str, short_name) || !strcmp(str, full_name)); 
+}
 
-	run_3int_arg_test(
-			generate_map_test,
-			_to_string(gen_map_test),
-			verbose,
-			2, 4, 7, 7, 12, 34, 27);
+_static_always_inline bool accept_verbose(int argc, char **argv)
+{
+	if (argc < 2)
+		return false;
+	
+	for (int i = 1; i < argc; i++) {
+		
+		if (isflag(argv[i], FLAG_VERBOSE_SHORT, FLAG_VERBOSE_FULL))
+			return true;
+	}
+	
+	return false;
+}
+
+_static_always_inline void run_scenarios(bool verbose)
+{
+	run_3int_arg_test((struct _run_3int_test_args) {
+		map_allocation_test,
+		_to_string(map_allocation_test),
+		verbose
+	}, 2, 10, 10, 12, 100, 100);
+
+	run_3int_arg_test((struct _run_3int_test_args) {
+		generate_map_test,
+		_to_string(generate_map_test),
+		verbose
+	}, 2, 4, 7, 7, 12, 34, 27);
+}
+
+int main(int argc, char **argv)
+{
+	if (accept_verbose(argc, argv))
+		run_scenarios(true);
+	
+	else run_scenarios(false);
+	
+	return 0;
 }

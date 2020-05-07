@@ -1,11 +1,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../include/save_princesses.h"
-#include "../include/error.h"
-#include "../include/core.h"
-#include "../include/cmd.h"
-#include "../include/core_assert.h"
+#include "save_princesses.h"
+#include "error.h"
+#include "core.h"
+#include "cmd.h"
 
 static void quit(map_t *map)
 {
@@ -80,10 +79,8 @@ static void run_save_princesses(map_t *map)
 {
 	save_princesses(*map, NULL);
 	
-	if (false) {
-		eprintf(ERR_MSG_COULD_NOT_SOLVE_MAP);
-		return;
-	}
+	eprintf(ERR_MSG_COULD_NOT_SOLVE_MAP);
+	return;
 }
 
 static void run_print_map(map_t *map)
@@ -115,46 +112,8 @@ static void start_interactive_mode(void (*commands[])(map_t *))
 	}
 }
 
-static inline
-bool isflag(const char *str, const char *flag_short_name, const char *flag_full_name)
-{
-	return (!strcmp(str, flag_short_name) || !strcmp(str, flag_full_name)); 
-}
-
-static void accept_program_flags(int argc, char **argv)
-{
-	if (argc < 2)
-		return;
-	
-	if (argc == 2 && isflag(argv[1], FLAG_ASSERT_SHORT, FLAG_ASSERT_FULL)) {
-		run_tests(false);
-		return;	
-	}
-	
-	bool verbose = false;
-	bool run = false;
-
-	for (int i = 1; i < argc; i++) {
-		
-		if (isflag(argv[i], FLAG_VERBOSE_SHORT, FLAG_VERBOSE_FULL))
-			verbose = true;
-		else if (isflag(argv[i], FLAG_ASSERT_SHORT, FLAG_ASSERT_FULL))
-			run = true;
-
-		if (run && verbose) {
-			run_tests(true);
-			break;
-		}
-	}
-
-	if (run)
-		run_tests(false);
-}
-
 int main(int argc, char **argv)
 {
-	accept_program_flags(argc, argv);
-
 	if (argc > 1) {
 		
 		FILE *map_file = fopen(argv[1], "r");

@@ -2,7 +2,7 @@
 #include <ctype.h>
 #include <stdarg.h>
 
-#include "../include/core.h"
+#include "core.h"
 
 #define NIL (char) -1
 #define isnil(value) ((char) (value) == NIL)
@@ -15,7 +15,7 @@ unsigned char hash(char symbol)
 	return symbol - 'a';
 }
 
-void put_command(void (*commands[])(map_t *), char symbol, const void (*command)(map_t *))
+void put_command(void (*commands[])(map_t *), char symbol, void (*command)(map_t *))
 {
 	unsigned char index = hash(symbol);
 

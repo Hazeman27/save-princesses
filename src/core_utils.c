@@ -1,4 +1,4 @@
-#include "../include/core_utils.h"
+#include "core_utils.h"
 
 _static_always_inline void skip_whitespace(FILE *file, char *c) {
 	do { *c = fgetc(file); } while (isspace(*c));
@@ -105,28 +105,9 @@ void print_map(const struct Map *map)
 	printf("===> Map %u x %u <===\n", map->rows, map->cols);
 
 	for (int i = 0; i < map->rows; i++) {
-		for (int j = 0; j < map->cols; j++) {
-			
-			switch (map->cells[i][j]) {
-				case ROAD:
-				case ROAD_ALT:	printf(CLR_YELLOW);	break;
-				case BUSH:
-				case BUSH_ALT:	printf(CLR_MAGENTA);	break;
-				case WALL:
-				case WALL_ALT:	printf(CLR_BLUE);	break;
-				case CURSOR:	printf(CLR_CYAN);	break;
-				case DRAKE:	printf(CLR_RED);	break;
-				case PRINCESS:	printf(CLR_GREEN);	break;
-				default: break;	    
-			}
-			
-			if (!map->cells[i][j])
-				putchar(' ');
-			else putchar(map->cells[i][j]);
-			
-			printf(CLR_RESET);
+		for (int j = 0; j < map->cols; j++) {	
+			putchar(map->cells[i][j]);
 		}
-
 		putchar('\n');
 	}
 
