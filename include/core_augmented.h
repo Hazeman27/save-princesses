@@ -8,6 +8,8 @@
 #include <time.h>
 
 #include "error.h"
+#include "core_utils.h"
+#include "core_map_generator.h"
 
 #define ROAD 		' '
 #define BUSH 		'@'
@@ -19,17 +21,18 @@
 #define BUSH_ALT	'H'
 #define WALL_ALT	'N'
 
+#define CURSOR		'>'
+
 #define CELLS "CHNDP"
 #define PRINCESSES_MAX_COUNT 5
 
 #define _static_always_inline static inline __attribute__ ((__always_inline__))
-#define _extern_always_inline extern inline __attribute__ ((__always_inline__))
 #define _always_inline inline __attribute__ ((__always_inline__))
 
 struct Map {
-	size_t rows;
-	size_t cols;
-	size_t drake_wake_time;
+	int rows;
+	int cols;
+	int drake_wake_time;
 	char *cells[];
 };
 
@@ -52,7 +55,7 @@ _always_inline char get_cell_span(char cell)
 }
 
 _always_inline
-char validate_cell(char cell, int *princesses_count, bool *drake_is_set, bool verbose)
+char validate_cell(char cell, int *princesses_count, bool *drake_is_set)
 {
 	char *error_message = NULL; 
 
@@ -71,14 +74,16 @@ char validate_cell(char cell, int *princesses_count, bool *drake_is_set, bool ve
 		else *drake_is_set = true;
 	}
 	
-	if (verbose && error_message)
+	if (error_message) {
 		eprintf(error_message);
+		return -1;
+	}
 
-	return (error_message ? -1 : cell);
+	return cell;
 }
 
-#define print_delta_time(stream, delta_time) \
-	(fprintf((stream), "> Execution of %s took %ld ns\n", __func__, (delta_time)))
+#define print_delta_time(stream, func_name, delta_time) \
+	(fprintf((stream), "> %s took %ld ns\n", (func_name), (delta_time)))
 
 _always_inline void record_timestamp(struct timespec *timespec)
 {
@@ -90,21 +95,6 @@ _always_inline long calc_delta_time(struct timespec start, struct timespec end) 
 	return end.tv_nsec - start.tv_nsec;
 }
 
-
-struct Map *new_map(size_t rows, size_t cols, size_t drake_wake_time, char *cells[]);
-
-void alloc_map_cells(char *cells[], size_t rows, size_t cols);
-
-void free_map_cells(char *cells[], size_t rows);
-
-void free_map(struct Map *map);
-
-struct Map *fmake_map(FILE *map_file);
-
-struct Map *gen_map(size_t rows, size_t cols, size_t drake_wake_time);
-
-void print_map(const struct Map *map);
-
-void save_princesses(struct Map *map);
+int *save_princesses(struct Map *map, int *path_length);
 
 #endif

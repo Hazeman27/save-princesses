@@ -1,8 +1,6 @@
 #ifndef SAVE_PRINCESSES_H
 #define SAVE_PRINCESSES_H
 
-#include <unistd.h>
-
 #define MAP_PATH_MAX_L 256
 
 /* Regular messages */

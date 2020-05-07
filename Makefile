@@ -1,4 +1,4 @@
-CFLAGS = -g -O2 -Wall -Iinclude
+CFLAGS = -g -O3 -Wall -Iinclude
 CC = gcc
 
 SRC_DIR := src

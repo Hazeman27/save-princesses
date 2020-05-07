@@ -18,19 +18,15 @@ static inline void print_help(map_t *map)
 	printf(MSG_COMMANDS);	
 }
 
-static inline void reset_map(map_t map)
+static inline void run_generate_map(map_t *map)
 {
-	if (map != NULL)
-		free_map(map);
-}
-
-static inline void generate_map(map_t *map)
-{
-	size_t rows, cols, drake_wake_time;
+	int rows;
+       	int cols;
+       	int drake_wake_time;
 	
 	printf(MSG_ENTER_NUM_ROWS_COLS);
 
-	if (scanf("%ld %ld", &rows, &cols) != 2) {
+	if (scanf("%d %d", &rows, &cols) != 2) {
 		eprintf(ERR_MSG_SCANF);
 		return;		
 	}
@@ -42,7 +38,7 @@ static inline void generate_map(map_t *map)
 
 	printf(MSG_ENTER_DRAKE_WAKE_T);
 
-	if (scanf("%ld", &drake_wake_time) != 1) {
+	if (scanf("%d", &drake_wake_time) != 1) {
 		eprintf(ERR_MSG_SCANF);
 		return;
 	}
@@ -52,8 +48,8 @@ static inline void generate_map(map_t *map)
 		return;
 	}
 
-	reset_map(*map);
-	*map = gen_map(rows, cols, drake_wake_time);
+	free_map(*map);
+	*map = generate_map(rows, cols, drake_wake_time);
 }
 
 
@@ -73,7 +69,7 @@ static inline void scan_map_from_file(map_t *map)
 		return;	
 	}	
 
-	reset_map(*map);
+	free_map(*map);
 	*map = fmake_map(map_file);
 	
 	if (fclose(map_file))
@@ -82,7 +78,12 @@ static inline void scan_map_from_file(map_t *map)
 
 static void run_save_princesses(map_t *map)
 {
-	save_princesses(*map);
+	save_princesses(*map, NULL);
+	
+	if (false) {
+		eprintf(ERR_MSG_COULD_NOT_SOLVE_MAP);
+		return;
+	}
 }
 
 static void run_print_map(map_t *map)
@@ -171,7 +172,7 @@ int main(int argc, char **argv)
 		}
 
 		if (map) {
-			save_princesses(map);
+			run_save_princesses(&map);
 			free_map(map);
 		}
 
@@ -185,7 +186,7 @@ interactive_mode:
 	void (*commands[COMMANDS_TABLE_SIZE])(map_t *) = { NULL };
 	
 	put_command(commands, CMD_SYM_HELP, 		print_help);
-	put_command(commands, CMD_SYM_GENERATE_MAP, 	generate_map);
+	put_command(commands, CMD_SYM_GENERATE_MAP, 	run_generate_map);
 	put_command(commands, CMD_SYM_ENTER_PATH, 	scan_map_from_file);
 	put_command(commands, CMD_SYM_PRINT_MAP, 	run_print_map);
 	put_command(commands, CMD_SYM_SAVE_PRINCESSES, 	run_save_princesses);

@@ -4,19 +4,22 @@
 
 #include "../include/core.h"
 
-char hash(char symbol)
+#define NIL (char) -1
+#define isnil(value) ((char) (value) == NIL)
+
+unsigned char hash(char symbol)
 {
 	if (!islower(symbol))
-	       return -1;
-
+	       return NIL;
+	
 	return symbol - 'a';
 }
 
 void put_command(void (*commands[])(map_t *), char symbol, const void (*command)(map_t *))
 {
-	char index = hash(symbol);
+	unsigned char index = hash(symbol);
 
-	if (!commands || index < 0 || commands[index])
+	if (!commands || isnil(index) || commands[index])
 		return;
 
 	commands[index] = command;
@@ -24,9 +27,9 @@ void put_command(void (*commands[])(map_t *), char symbol, const void (*command)
 
 void (*get_command(void (*commands[])(map_t *), char symbol))(map_t *)
 {
-	char index = hash(symbol);
+	unsigned char index = hash(symbol);
 
-	if (!commands || index < 0)
+	if (!commands || isnil(index))
 		return NULL;
 
 	return commands[index];

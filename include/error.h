@@ -22,6 +22,7 @@
 #define ERR_MSG_MULTI_DRAKE_DEFS 		"Multiple drakes are not allowed"
 #define ERR_MSG_DRAKE_NOT_SET			"Map does not have a drake"
 #define ERR_MSG_CLOCK_GETTIME			"Couldn't capture timestamp"
+#define ERR_MSG_COULD_NOT_SOLVE_MAP		"Couldn't solve map and save princesses"
 
 #define eprintf(message) (fprintf(stderr, "Error has occured in %s: %s\n", __func__, message))
 
