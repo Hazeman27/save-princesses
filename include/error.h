@@ -25,12 +25,6 @@
 #define ERR_MSG_COULD_NOT_SOLVE_MAP		"Couldn't solve map and save princesses"
 
 #define eprintf(message) (fprintf(stderr, "Error has occured in %s: %s\n", __func__, message))
-
 #define PERROR_MALLOC (eprintf(ERR_MSG_MALLOC))
-
-#define PERROR_NEG_ROWS_COLS {		\
-	errno = EINVAL;			\
-	eprintf(ERR_MSG_NEG_VAL);	\
-}
 
 #endif

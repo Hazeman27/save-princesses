@@ -4,6 +4,7 @@
 #include "save_princesses.h"
 #include "error.h"
 #include "core.h"
+#include "map_generator.h"
 #include "cmd.h"
 
 static void quit(map_t *map)
@@ -31,7 +32,7 @@ static inline void run_generate_map(map_t *map)
 	}
 	
 	if (rows < 0 || cols < 0) {
-		PERROR_NEG_ROWS_COLS;
+		eprintf(ERR_MSG_NEG_VAL);
 		return;
 	}
 

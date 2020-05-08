@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "core_augmented.h"
+#include "map_generator_augmented.h"
 
 #define FLAG_VERBOSE_SHORT 	"-v"
 #define FLAG_VERBOSE_FULL 	"--verbose"
@@ -70,10 +71,6 @@ _static_always_inline void _print_default(void *var, const char *var_name) {
 	printf(append);						\
 }
 
-_static_always_inline char *iscell(char symbol) {
-	return strchr(CELLS, symbol);
-}
-
 _static_always_inline void check_map_against_char(const struct Map *map, char c)
 {
 	assert(map != NULL);
@@ -84,8 +81,7 @@ _static_always_inline void check_map_against_char(const struct Map *map, char c)
 	}
 }	
 
-_static_always_inline
-void map_allocation_test(int rows, int cols, int drake_wake_time, bool verbose)
+static void map_allocation_test(int rows, int cols, int drake_wake_time, bool verbose)
 {
 	struct Map *map = new_map(rows, cols, drake_wake_time);
 	
@@ -105,8 +101,7 @@ void map_allocation_test(int rows, int cols, int drake_wake_time, bool verbose)
 	free_map(map);
 }
 
-_static_always_inline
-void generate_map_test(int rows, int cols, int drake_wake_time, bool verbose)
+static void generate_map_test(int rows, int cols, int drake_wake_time, bool verbose)
 {
 	struct Map *map = generate_map(rows, cols, drake_wake_time);
 
@@ -160,8 +155,7 @@ static void run_3int_arg_test(struct _run_3int_test_args args, int argc, ...)
 	va_end(test_args);
 }
 
-_static_always_inline
-bool isflag(const char *str, const char *short_name, const char *full_name) {
+_static_always_inline bool isflag(const char *str, const char *short_name, const char *full_name) {
 	return (!strcmp(str, short_name) || !strcmp(str, full_name)); 
 }
 
@@ -171,7 +165,6 @@ _static_always_inline bool accept_verbose(int argc, char **argv)
 		return false;
 	
 	for (int i = 1; i < argc; i++) {
-		
 		if (isflag(argv[i], FLAG_VERBOSE_SHORT, FLAG_VERBOSE_FULL))
 			return true;
 	}
@@ -196,6 +189,8 @@ _static_always_inline void run_scenarios(bool verbose)
 
 int main(int argc, char **argv)
 {
+	srand(time(0));
+
 	if (accept_verbose(argc, argv))
 		run_scenarios(true);
 	

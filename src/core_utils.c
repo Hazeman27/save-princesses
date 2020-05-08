@@ -4,8 +4,7 @@ _static_always_inline void skip_whitespace(FILE *file, char *c) {
 	do { *c = fgetc(file); } while (isspace(*c));
 }
 
-_static_always_inline
-bool fscan_map(FILE *map_file, struct Map *map)
+_static_always_inline bool fscan_map(FILE *map_file, struct Map *map)
 {
 	char cell;
 	bool drake_is_set = false;
@@ -54,7 +53,7 @@ struct Map *new_map(int rows, int cols, int drake_wake_time)
 	
 	for (int i = 0; i < rows; i++) {
 
-		map->cells[i] = (char *) calloc(cols + 1, sizeof(char));
+		map->cells[i] = (char *) calloc(cols, sizeof(char));
 
 		if (!map->cells[i])
 			goto alloc_failure;
@@ -106,7 +105,15 @@ void print_map(const struct Map *map)
 
 	for (int i = 0; i < map->rows; i++) {
 		for (int j = 0; j < map->cols; j++) {	
+			
+			switch (map->cells[i][j]) {
+				case PRINCESS: printf(CLR_GREEN); break;
+				case DRAKE: printf(CLR_RED); break;
+				default: break;
+			}
+			
 			putchar(map->cells[i][j]);
+			printf(CLR_RESET);
 		}
 		putchar('\n');
 	}

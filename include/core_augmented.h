@@ -9,17 +9,12 @@
 
 #include "error.h"
 #include "core_utils.h"
-#include "core_map_generator.h"
 
-#define ROAD 		' '
-#define BUSH 		'@'
-#define WALL 		'#'
+#define ROAD 		'C'
+#define BUSH 		'H'
+#define WALL 		'N'
 #define DRAKE 		'D'
 #define PRINCESS 	'P'
-
-#define ROAD_ALT	'C'
-#define BUSH_ALT	'H'
-#define WALL_ALT	'N'
 
 #define CURSOR		'>'
 
@@ -39,15 +34,12 @@ struct Map {
 _always_inline char get_cell_span(char cell)
 {
 	switch (cell) {
-		case ROAD_ALT:
-		case WALL_ALT:
 		case ROAD:
 		case WALL:
 		case DRAKE:
 		case PRINCESS:
 			return 1;
 		case BUSH:
-		case BUSH_ALT:
 			return 2;
 		default:
 			return -1;
@@ -65,7 +57,7 @@ char validate_cell(char cell, int *princesses_count, bool *drake_is_set)
 	else if (get_cell_span(cell) < 0)
 		error_message = strdup(ERR_MSG_CELL_SYM);
 
-	else if (cell == PRINCESS && ++(*princesses_count) >= PRINCESSES_MAX_COUNT)
+	else if (cell == PRINCESS && ++(*princesses_count) > PRINCESSES_MAX_COUNT)
 		error_message = strdup(ERR_MSG_PRINCESSES_MAX_COUNT_EXCEEDED);
 
 	else if (cell == DRAKE) {

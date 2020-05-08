@@ -1,7 +1,7 @@
 #ifndef SAVE_PRINCESSES_CORE_UTILS_H
 #define SAVE_PRINCESSES_CORE_UTILS_H
 
-#include "../include/core_augmented.h"
+#include "core_augmented.h"
 
 #define CLR_RED     	"\x1b[31m"
 #define CLR_GREEN  	"\x1b[32m"

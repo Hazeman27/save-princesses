@@ -1,10 +1,14 @@
 #include <stdlib.h>
-
-#include "../include/stack.h"
-#include "../include/error.h"
+#include "error.h"
 
 #define ERR_MSG_STACK_OVERFLOW "Stack overflow"
 #define ERR_MSG_STACK_UNDERFLOW "Stack underflow"
+
+struct Stack {
+	size_t size;
+	size_t top;	
+	int items[];
+};
 
 struct Stack *new_stack(size_t size)
 {
@@ -28,9 +32,7 @@ int push(struct Stack *stack, int item)
 	}
 
 	stack->items[stack->top] = item;
-	stack->top++;
-
-	return 0;
+	return stack->top++;
 }
 
 int push_pair(struct Stack *stack, int item_a, int item_b)
@@ -58,4 +60,10 @@ int pop_pair(struct Stack *stack, int *pop_a, int *pop_b)
 		return -1;
 
 	return *pop_b = pop(stack);
+}
+
+
+int peek_top(struct Stack *stack)
+{
+	return stack->top;
 }
