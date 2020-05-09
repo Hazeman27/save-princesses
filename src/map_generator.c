@@ -8,7 +8,7 @@ _static_always_inline void free_visited(bool *visited[], int rows)
 	       free(visited[i]);
 }
 
-_static_always_inline int alloc_visited(bool *visited[], int rows, int cols)
+_static_always_inline bool alloc_visited(bool *visited[], int rows, int cols)
 {
 	for (int i = 0; i < rows; i++) {
 		
@@ -17,11 +17,11 @@ _static_always_inline int alloc_visited(bool *visited[], int rows, int cols)
 		if (!visited[i]) {
 			PERROR_MALLOC;
 			free_visited(visited, rows);
-			return -1;
+			return false;
 		}
 	}
 
-	return 0;
+	return true;
 }
 
 _static_always_inline bool is_visited(bool *visited[], int dir, int row, int col)
@@ -145,10 +145,9 @@ struct Map *generate_map(int rows, int cols, int drake_wake_time)
 
 	bool *visited[rows];
 	
-	if (!map || !stack || alloc_visited(visited, rows, cols) < 0)
+	if (!map || !stack || !alloc_visited(visited, rows, cols))
 		return NULL;
 
-	int dir;
 	int row = 0;
 	int col = 0;
 
@@ -159,7 +158,7 @@ struct Map *generate_map(int rows, int cols, int drake_wake_time)
 	
 	while (peek_top(stack)) {
 		
-		dir = find_direction(map, visited, row, col);
+		int dir = find_direction(map, visited, row, col);
 		
 		if (dir < 0) {
 			if (pop_pair(stack, &col, &row) < 0)
