@@ -9,7 +9,12 @@
 #define CLR_BLUE    	"\x1b[34m"
 #define CLR_MAGENTA 	"\x1b[35m"
 #define CLR_CYAN    	"\x1b[36m"
-#define CLR_RESET   	"\x1b[0m"
+
+#define BG_RED		"\x1b[41m"
+#define BG_GREEN	"\x1b[42m"
+
+#define TXT_UNDERLINE	"\x1b[4m"
+#define RESET   	"\x1b[0m"
 
 struct Map *new_map(int rows, int cols, int drake_wake_time);
 

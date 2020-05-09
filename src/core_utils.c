@@ -100,21 +100,45 @@ void print_map(const struct Map *map)
 		eprintf(ERR_MSG_NO_MAP_PRINT);
 		return;
 	}
+	
+	bool pretty_print = true;
+
+	if (map->cols > 30)
+		pretty_print = false;
 
 	printf("===> Map %u x %u <===\n", map->rows, map->cols);
+	
+	if (pretty_print) {
+		printf("     ");
 
+		for (int i = 0; i < map->cols; i++)
+			printf(CLR_YELLOW "%03d " RESET, i);
+		printf("\n");
+	}
+	
 	for (int i = 0; i < map->rows; i++) {
+		
+		if (pretty_print)
+			printf(CLR_YELLOW "%03d  " RESET, i);
+
 		for (int j = 0; j < map->cols; j++) {	
 			
 			switch (map->cells[i][j]) {
+				case WALL: printf(CLR_BLUE); break;
 				case PRINCESS: printf(CLR_GREEN); break;
 				case DRAKE: printf(CLR_RED); break;
 				default: break;
 			}
 			
-			putchar(map->cells[i][j]);
-			printf(CLR_RESET);
+			if (pretty_print)
+				printf(" ");
+
+			printf("%c" RESET, map->cells[i][j]);
+			
+			if (pretty_print)
+				printf("  ");
 		}
+
 		putchar('\n');
 	}
 

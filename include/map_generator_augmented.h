@@ -1,12 +1,12 @@
 #ifndef SAVE_PRINCESSES_CORE_MAP_GENERATOR_AUGMENTED_H
 #define SAVE_PRINCESSES_CORE_MAP_GENERATOR_AUGMENTED_H
 
-#include "core_augmented.h"
-#include "stack.h"
-
 #define DIRECTIONS_COUNT 4
 
 enum Direction { NORTH, WEST, SOUTH, EAST };
+
+#include "core_augmented.h"
+#include "stack.h"
 
 #define ERR_MSG_UNKNOWN_DIRECTION "Unknown direction"
 
@@ -56,7 +56,7 @@ _always_inline int reverse_direction(int dir)
 	}
 }
 
-_always_inline int rotate_clockwise(int dir)
+_always_inline int turn_clockwise(int dir)
 {
 	switch (dir) {
 		case NORTH:	return EAST;
@@ -69,7 +69,7 @@ _always_inline int rotate_clockwise(int dir)
 	}
 }
 
-_always_inline int rotate_counter_clockwise(int dir)
+_always_inline int turn_counter_clockwise(int dir)
 {
 	switch (dir) {
 		case NORTH:	return WEST;

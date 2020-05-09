@@ -1,5 +1,4 @@
 #include "map_generator_augmented.h"
-#include "core_utils.h"
 
 _static_always_inline void free_visited(bool *visited[], int rows)
 {
@@ -58,7 +57,7 @@ int find_direction(struct Map *map, bool *visited[], int row, int col)
 }
 
 _static_always_inline
-int push_direction(stack_t stack, bool *visited[], int dir, int *row, int *col)
+int push_direction(struct Stack *stack, bool *visited[], int dir, int *row, int *col)
 {
 	if (offset_pos(dir, row, col) < 0)
 		return -1;
@@ -69,7 +68,7 @@ int push_direction(stack_t stack, bool *visited[], int dir, int *row, int *col)
 
 _static_always_inline void add_walls(struct Map *map, int dir, int row, int col)
 {
-	int _counter_clockwise = rotate_counter_clockwise(dir);
+	int _counter_clockwise = turn_counter_clockwise(dir);
 		
 	if (_counter_clockwise < 0 || out_of_bounds(map, _counter_clockwise, row, col))
 		return;
@@ -140,7 +139,7 @@ _static_always_inline void set_drake(struct Map *map, bool *visited[])
 struct Map *generate_map(int rows, int cols, int drake_wake_time)
 {
 	struct Map *map = new_map(rows, cols, drake_wake_time);
-	stack_t stack = new_stack((rows * cols) << 1);
+	struct Stack *stack = new_stack((rows * cols) << 1);
 
 	bool *visited[rows];
 	

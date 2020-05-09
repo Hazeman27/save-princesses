@@ -1,14 +1,4 @@
-#include <stdlib.h>
-#include "error.h"
-
-#define ERR_MSG_STACK_OVERFLOW "Stack overflow"
-#define ERR_MSG_STACK_UNDERFLOW "Stack underflow"
-
-struct Stack {
-	size_t size;
-	size_t top;	
-	int items[];
-};
+#include "stack.h"
 
 struct Stack *new_stack(size_t size)
 {
