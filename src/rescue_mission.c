@@ -1,11 +1,7 @@
-#include "rescue_mission.h"
+#include <limits.h>
 
-_static_always_inline bool is_dummy_node(struct Node node)
-{
-	return node.span == DUMMY_NODE_SPAN &&
-		node.row == DUMMY_NODE_ROW &&
-		node.col == DUMMY_NODE_COL;
-}
+#include "core_utils.h"
+#include "rescue_mission.h"
 
 _static_always_inline bool is_wall(struct Map *map, int row, int col) {
 	return map->cells[row][col] == WALL;
@@ -41,7 +37,7 @@ _static_always_inline bool is_junction(struct Map *map, int row, int col)
 
 _static_always_inline bool is_node_cell(struct Map *map, int row, int col)
 {
-	return is_junction(map, row, col) || is_bush(map, row, col) ||
+	return (!row && !col) || is_junction(map, row, col) || is_bush(map, row, col) ||
 		is_princess(map, row, col) || is_drake(map, row, col);
 }
 
@@ -130,7 +126,7 @@ void connect_nodes(struct Node *node_a, struct Node *node_b, int dir)
 {
 	if (!node_a || !node_b)
 		return;
-
+	
 	node_a->neighbours[dir] = node_b;
 	node_b->neighbours[reverse_direction(dir)] = node_a;
 }
@@ -143,13 +139,16 @@ void scan_node(struct Graph *graph, struct Map *map, int row, int col)
 	
 	graph->nodes_count++;
 	graph->nodes[row][col] = (struct Node) {
-		get_cell_span(map->cells[row][col]), row, col
+		get_cell_span(map->cells[row][col]), row, col, INT_MAX
 	};
 	
 	for (int dir = 0; dir < DIRECTIONS_COUNT; dir++) {
 		
 		if (out_of_bounds(map, dir, row, col))
 			continue;
+		
+		_row = row;
+		_col = col;
 
 		do {
 			if (offset_pos(dir, &_row, &_col) < 0)
@@ -187,9 +186,9 @@ struct Rescue_Mission *make_rescue_mission(struct Map *map)
 	if (!graph)
 		return NULL;
 
-	for (int row = 0; row < map->rows; row++) {
+	for (register int row = 0; row < map->rows; row++) {
 
-		for (int col = 0; col < map->cols; col++) {
+		for (register int col = 0; col < map->cols; col++) {
 			
 			if (is_wall(map, row, col) || !is_node_cell(map, row, col))
 				continue;		
@@ -209,6 +208,36 @@ struct Rescue_Mission *make_rescue_mission(struct Map *map)
 	return new_rescue_mission(graph, princesses_count, drake_pos, princesses_pos);
 }
 
+void print_graph_nodes(const struct Graph *graph)
+{
+	if (!graph)
+		return;
+
+	for (int i = 0; i < graph->rows; i++) {
+		for (int j = 0; j < graph->cols; j++) {
+			
+			if (is_dummy_node(graph->nodes[i][j]))
+				continue;
+			
+			struct Node node = graph->nodes[i][j];
+
+			printf("Node[%d, %d]: ", node.row, node.col);
+
+			for (int k = 0; k < DIRECTIONS_COUNT; k++) {
+				
+				if (!node.neighbours[k])
+					continue;
+
+				printf("(%d, %d) ",
+						node.neighbours[k]->row,
+						node.neighbours[k]->col);
+			}
+
+			printf("\n");
+		}
+	}
+}
+
 void print_graph(const struct Graph *graph)
 {
 	if (!graph)
@@ -219,21 +248,21 @@ void print_graph(const struct Graph *graph)
 
 	bool pretty_print = true;
 
-	if (graph->cols > 30) {
+	if (graph->cols > 25) {
 		pretty_print = false;
 		prefix = "";
 		suffix = "";
 	} else {
 		prefix = " ";
-		suffix = "  ";
+		suffix = " ";
 	}
 	
 	if (pretty_print) {
 		
-		printf("     ");
+		printf("   ");
 		
 		for (int i = 0; i < graph->cols; i++)
-			printf(CLR_YELLOW "%03d " RESET, i);
+			printf(CLR_YELLOW "%02d " RESET, i);
 		
 		printf("\n");
 	}
@@ -241,7 +270,7 @@ void print_graph(const struct Graph *graph)
 	for (int i = 0; i < graph->rows; i++) {
 		
 		if (pretty_print)
-			printf(CLR_YELLOW "%03d  " RESET, i);
+			printf(CLR_YELLOW "%02d " RESET, i);
 		
 		for (int j = 0; j < graph->cols; j++) {	
 			

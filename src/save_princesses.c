@@ -78,7 +78,8 @@ static inline void scan_map_from_file(map_t *map)
 
 static void run_save_princesses(map_t *map)
 {
-	save_princesses(*map, NULL);
+	int path_length;
+	save_princesses(*map, &path_length);
 	
 	eprintf(ERR_MSG_COULD_NOT_SOLVE_MAP);
 	return;

@@ -6,7 +6,6 @@
 enum Direction { NORTH, WEST, SOUTH, EAST };
 
 #include "core_augmented.h"
-#include "stack.h"
 
 #define ERR_MSG_UNKNOWN_DIRECTION "Unknown direction"
 

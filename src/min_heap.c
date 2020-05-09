@@ -1,7 +1,7 @@
 #include "min_heap.h"
 
 _static_always_inline int parent_i(int index) {
-	return (index - 1) >> 1;
+	return (index - 1) / 2;
 }
 
 _static_always_inline int lchild_i(int index) {
@@ -32,10 +32,8 @@ static void heapify(struct Heap *heap, int index)
 	int left = lchild_i(index);
 	int right = rchild_i(index);
 
-	if (heap->nodes[index]->priority <= heap->nodes[left]->priority)
-		return;
-	
-	if (heap->nodes[index]->priority <= heap->nodes[right]->priority)
+	if (heap->nodes[index]->priority <= heap->nodes[left]->priority && 
+			heap->nodes[index]->priority <= heap->nodes[right]->priority)
 		return;
 
 	if (heap->nodes[left]->priority < heap->nodes[right]->priority) {
@@ -48,6 +46,15 @@ static void heapify(struct Heap *heap, int index)
 
 	swap(&heap->nodes[index], &heap->nodes[right]);
 	heapify(heap, right);
+}
+
+void min_heapify(struct Heap *heap)
+{
+	if (!heap)
+		return;
+
+	for (int i = heap->size / 2; i >= 0; i--)
+		heapify(heap, i);
 }
 
 struct Heap *new_heap(size_t capacity)
@@ -64,31 +71,34 @@ struct Heap *new_heap(size_t capacity)
 	return heap;
 }
 
-int insert(struct Heap *heap, struct Node *node)
+bool insert(struct Heap *heap, struct Node *node)
 {
-	if (!heap)
-		return -1;
+	if (!heap || !node)
+		return false;
 
 	if (heap->size == heap->capacity) {
 		eprintf(ERR_MSG_HEAP_OVERFLOW);
-		return -1;
+		return false;
 	}
 
 	heap->nodes[heap->size] = node; 
 	heap->size++;
 
-	int current = heap->size;
-
+	int current = heap->size - 1;
+	
 	while (heap->nodes[current]->priority < heap->nodes[parent_i(current)]->priority) {
 		swap(&heap->nodes[current], &heap->nodes[parent_i(current)]);
 		current = parent_i(current);
 	}
 
-	return heap->size;
+	return true;
 }
 
 struct Node *extract_min(struct Heap *heap)
 {
+	if (!heap)
+		return NULL;
+
 	struct Node *node = heap->nodes[0];
 	
 	heap->size--;

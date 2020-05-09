@@ -11,9 +11,15 @@ struct Heap {
 	struct Node *nodes[];
 };
 
+_always_inline bool isempty(const struct Heap *heap) {
+	return !heap->size;
+}
+
 struct Heap *new_heap(size_t capacity);
 
-int insert(struct Heap *heap, struct Node *node);
+void min_heapify(struct Heap *heap);
+
+bool insert(struct Heap *heap, struct Node *node);
 
 struct Node *extract_min(struct Heap *heap);
 

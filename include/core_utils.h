@@ -16,9 +16,11 @@
 #define TXT_UNDERLINE	"\x1b[4m"
 #define RESET   	"\x1b[0m"
 
+void free_map(struct Map *map);
+
 struct Map *new_map(int rows, int cols, int drake_wake_time);
 
-void free_map(struct Map *map);
+struct Map *copy_map(const struct Map *map);
 
 struct Map *fmake_map(FILE *map_file);
 

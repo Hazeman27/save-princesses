@@ -49,10 +49,13 @@ struct Map *new_map(int rows, int cols, int drake_wake_time)
 	if (!map)
 		goto alloc_failure;
 
-	*map = (struct Map) { rows, cols, drake_wake_time };
+	*map = (struct Map) {
+		rows,
+		cols,
+		drake_wake_time
+	};
 	
 	for (int i = 0; i < rows; i++) {
-
 		map->cells[i] = (char *) calloc(cols, sizeof(char));
 
 		if (!map->cells[i])
@@ -66,6 +69,19 @@ alloc_failure:
 	PERROR_MALLOC;
 
 	return NULL;
+}
+
+struct Map *copy_map(const struct Map *map)
+{
+	struct Map *copy = new_map(map->rows, map->cols, map->drake_wake_time);
+
+	if (!copy)
+		return NULL;
+
+	for (int i = 0; i < map->rows; i++)
+		memcpy(copy->cells[i], map->cells[i], sizeof(char) * map->cols);
+
+	return copy;
 }
 
 struct Map *fmake_map(FILE *map_file)
@@ -103,30 +119,32 @@ void print_map(const struct Map *map)
 	
 	bool pretty_print = true;
 
-	if (map->cols > 30)
+	if (map->cols > 25)
 		pretty_print = false;
 
-	printf("===> Map %u x %u <===\n", map->rows, map->cols);
+	printf(">> Map %u x %u\n", map->rows, map->cols);
+	printf(">> Drake's wake time: %u\n", map->drake_wake_time);
 	
 	if (pretty_print) {
-		printf("     ");
+		printf("   ");
 
 		for (int i = 0; i < map->cols; i++)
-			printf(CLR_YELLOW "%03d " RESET, i);
+			printf(CLR_YELLOW "%02d " RESET, i);
 		printf("\n");
 	}
 	
 	for (int i = 0; i < map->rows; i++) {
 		
 		if (pretty_print)
-			printf(CLR_YELLOW "%03d  " RESET, i);
+			printf(CLR_YELLOW "%02d " RESET, i);
 
 		for (int j = 0; j < map->cols; j++) {	
 			
 			switch (map->cells[i][j]) {
 				case WALL: printf(CLR_BLUE); break;
-				case PRINCESS: printf(CLR_GREEN); break;
-				case DRAKE: printf(CLR_RED); break;
+				case PATH: printf(CLR_CYAN); break;
+				case PRINCESS: printf(TXT_UNDERLINE CLR_GREEN); break;
+				case DRAKE: printf(TXT_UNDERLINE CLR_RED); break;
 				default: break;
 			}
 			
@@ -136,13 +154,11 @@ void print_map(const struct Map *map)
 			printf("%c" RESET, map->cells[i][j]);
 			
 			if (pretty_print)
-				printf("  ");
+				printf(" ");
 		}
 
 		putchar('\n');
 	}
-
-	printf("===> Drake wake time: %u <===\n", map->drake_wake_time);
 }
 
 

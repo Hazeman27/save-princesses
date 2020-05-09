@@ -1,4 +1,6 @@
 #include "map_generator_augmented.h"
+#include "stack.h"
+#include "core_utils.h"
 
 _static_always_inline void free_visited(bool *visited[], int rows)
 {

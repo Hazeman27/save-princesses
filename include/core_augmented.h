@@ -7,8 +7,10 @@
 #include <string.h>
 #include <time.h>
 
+#define _static_always_inline static inline __attribute__ ((__always_inline__))
+#define _always_inline               inline __attribute__ ((__always_inline__))
+
 #include "error.h"
-#include "core_utils.h"
 
 #define ROAD 		'C'
 #define BUSH 		'H'
@@ -16,13 +18,11 @@
 #define DRAKE 		'D'
 #define PRINCESS 	'P'
 
+#define PATH		'.'
 #define CURSOR		'>'
 
 #define CELLS "CHNDP"
 #define PRINCESSES_MAX_COUNT 5
-
-#define _static_always_inline static inline __attribute__ ((__always_inline__))
-#define _always_inline inline __attribute__ ((__always_inline__))
 
 struct Map {
 	int rows;
