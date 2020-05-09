@@ -21,8 +21,10 @@
 #define PATH		'.'
 #define CURSOR		'>'
 
-#define CELLS "CHNDP"
 #define PRINCESSES_MAX_COUNT 5
+
+#define DRAKE_PATH_NOT_FOUND "Couldn't find path to drake...\n"
+#define PRINCESS_PATH_NOT_FOUND "Couldn't find path to princesses...\n"
 
 struct Map {
 	int rows;

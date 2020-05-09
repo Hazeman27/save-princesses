@@ -24,6 +24,20 @@ _static_always_inline void swap(struct Node **node_a, struct Node **node_b)
 	*node_b = tmp;
 }
 
+struct Heap *new_heap(size_t capacity)
+{
+	struct Heap *heap = (struct Heap *) malloc(
+			sizeof(struct Heap) + sizeof(struct Node *) * capacity);
+
+	if (!heap) {
+		PERROR_MALLOC;
+		return NULL;
+	}
+
+	*heap = (struct Heap) { 0, capacity };
+	return heap;
+}
+
 static void heapify(struct Heap *heap, int index)
 {
 	if (is_leaf(heap, index))
@@ -55,20 +69,6 @@ void min_heapify(struct Heap *heap)
 
 	for (int i = heap->size / 2; i >= 0; i--)
 		heapify(heap, i);
-}
-
-struct Heap *new_heap(size_t capacity)
-{
-	struct Heap *heap = (struct Heap *) malloc(
-			sizeof(struct Heap) + sizeof(struct Node *) * capacity);
-
-	if (!heap) {
-		PERROR_MALLOC;
-		return NULL;
-	}
-
-	*heap = (struct Heap) { 0, capacity };
-	return heap;
 }
 
 bool insert(struct Heap *heap, struct Node *node)

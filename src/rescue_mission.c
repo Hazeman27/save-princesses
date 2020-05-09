@@ -1,5 +1,3 @@
-#include <limits.h>
-
 #include "core_utils.h"
 #include "rescue_mission.h"
 

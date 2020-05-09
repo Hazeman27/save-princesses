@@ -5,6 +5,7 @@
 #define DUMMY_NODE_ROW -1
 #define DUMMY_NODE_COL -1
 
+#include <limits.h>
 #include "map_generator_augmented.h"
 
 struct Node {
