@@ -51,6 +51,14 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+# Compile commands
+compile_commands.json
+
 # Vim swap files
 *.swp
 *.swo
+
+# Dirs
+out
+tags
+.vscode
