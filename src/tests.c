@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "core_augmented.h"
+#include "core_utils.h"
 #include "map_generator_augmented.h"
 
 #define FLAG_VERBOSE_SHORT 	"-v"
@@ -122,6 +123,41 @@ static void generate_map_test(int rows, int cols, int drake_wake_time, bool verb
 	free_map(map);
 }
 
+static void save_princesses_test(bool verbose)
+{
+	if (verbose)
+		print_test_label(__func__);
+
+	struct Map *map = generate_map(10, 10, 0);
+	assert(map);
+
+	int path_length;
+	int *path = save_princesses(map, &path_length, false, verbose);
+	
+	assert(!path && !path_length);
+	free_map(map);
+
+	char **cells = (char **) malloc(sizeof(char *) * 3);
+	
+	cells[0] = "CCCCC";
+	cells[1] = "CCDCC";
+	cells[2] = "CPCPC";
+	
+	map = new_map(3, 5, 4);
+	assert(map);
+	
+	for (int i = 0; i < 3; i++)
+		memmove(map->cells[i], cells[i], sizeof(char) * 5);
+
+	path = save_princesses(map, &path_length, false, verbose);
+	assert(path && path_length == 8);
+
+	if (verbose)
+		print_path(map, path, path_length);
+
+	free_map(map);
+}
+
 static void run_3int_arg_test(struct _run_3int_test_args args, int argc, ...)
 {
 	assert(argc >= 0);
@@ -185,6 +221,8 @@ _static_always_inline void run_scenarios(bool verbose)
 		_to_string(generate_map_test),
 		verbose
 	}, 2, 4, 7, 7, 12, 34, 27);
+
+	save_princesses_test(verbose);
 }
 
 int main(int argc, char **argv)
