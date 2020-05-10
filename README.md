@@ -50,7 +50,7 @@ Program receives 2 dimensional array of characters that represents the maze, as 
 as the wake parameter of the dragon. Set of allowed characters is defined as follows:
 
 | Character | Meaning |
-|---------------------|
+|-----------|---------|
 |     D     | Dragon  |
 |     P     | Princess|
 |     C     | Road    |
@@ -81,7 +81,7 @@ had failed.
 After launching, interaction tool will greet you with the commands list:
 
 | Command                   | Function                     |
-------------------------------------------------------------
+|---------------------------|------------------------------|
 | h                         | output commands list         |
 | f [filepath]              | read labyrinth from the file |
 | g [rows] [cols] [drake_t] | generate labyrinth           |
