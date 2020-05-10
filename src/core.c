@@ -27,8 +27,8 @@ _static_always_inline void swap_pos(int pos_a[2], int pos_b[2])
 
 _static_always_inline int compare_paths(const void *path_a, const void *path_b)
 {
-	return ((struct Path *) path_a)->time_complexity -
-		((struct Path *) path_b)->time_complexity;
+	return ((*(struct Path **) path_a))->time_complexity -
+		((*(struct Path **) path_b))->time_complexity;
 }
 
 _static_always_inline int factorial(int n)
