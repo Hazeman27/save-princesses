@@ -50,7 +50,7 @@ Program receives 2 dimensional array of characters that represents the maze, as 
 as the wake parameter of the dragon. Set of allowed characters is defined as follows:
 
 | Character | Meaning |
------------------------
+|---------------------|
 |     D     | Dragon  |
 |     P     | Princess|
 |     C     | Road    |
@@ -310,8 +310,8 @@ from this [source](https://drive.google.com/drive/folders/1aPOqsTCRHPG48I17CX5rI
 
 Here are some testing results:
 
-| Map size | Princesses count | Distance to dragon | Time to slay dragon | Time to save princesses | Path time complexity |
----------------------------------------------------------------------------------------------------------------------------
+| Map size | Princesses count | Distance to dragon | Time to slay dragon  | Time to save princesses| Path time complexity |
+|----------|------------------|--------------------|----------------------|------------------------|----------------------|
 | 10 x 10  | 1                | 23				   | ~20000 ns            | ~8000 ns               | 53                   |
 | 20 x 20  | 1                | 16                 | ~12000 ns            | ~35700 ns			   | 39                   |
 | 50 x 50  | 1                | 76                 | ~232000 ns           | ~250000 ns             | 148                  |
