@@ -143,6 +143,7 @@ void print_map(const struct Map *map)
 			switch (map->cells[i][j]) {
 				case WALL: printf(CLR_BLUE); break;
 				case PATH: printf(CLR_CYAN); break;
+				case PATH_KEY: printf(CLR_MAGENTA); break;
 				case PRINCESS: printf(TXT_UNDERLINE CLR_GREEN); break;
 				case DRAKE: printf(TXT_UNDERLINE CLR_RED); break;
 				default: break;
@@ -161,6 +162,31 @@ void print_map(const struct Map *map)
 	}
 }
 
+void print_path(struct Map *map, int *path, int path_length)
+{
+	if (!map || !path)
+		return;
+	
+	struct Map *copy = copy_map(map);
+
+	if (!copy)
+		return;
+	
+	printf(">> Path:\n\tLength: %d\n", path_length);
+
+	for (int i = 0; i < path_length; i++) {
+
+		int row = path[(i << 1)];
+		int col = path[(i << 1) + 1];
+		
+		if (copy->cells[row][col] == DRAKE || copy->cells[row][col] == PRINCESS)
+			copy->cells[row][col] = PATH_KEY;
+		else copy->cells[row][col] = PATH;
+	}
+
+	print_map(copy);
+	free_map(copy);
+}
 
 /**
  * Thread sleep in miliseconds function. Implementation by 'caf'

@@ -19,12 +19,14 @@
 #define PRINCESS 	'P'
 
 #define PATH		'.'
+#define PATH_KEY	'*'
 #define CURSOR		'>'
 
 #define PRINCESSES_MAX_COUNT 5
 
 #define DRAKE_PATH_NOT_FOUND "Couldn't find path to drake...\n"
 #define PRINCESS_PATH_NOT_FOUND "Couldn't find path to princesses...\n"
+#define DRAKE_AWAKEN "Failed to reach drake in time...\n"
 
 struct Map {
 	int rows;
@@ -76,8 +78,9 @@ char validate_cell(char cell, int *princesses_count, bool *drake_is_set)
 	return cell;
 }
 
-#define print_delta_time(stream, func_name, delta_time) \
-	(fprintf((stream), "> %s took %ld ns\n", (func_name), (delta_time)))
+_always_inline void print_delta_time(FILE *stream, const char *label, long delta_time) {
+	fprintf(stream, "> %s took %ld ns\n", label, delta_time);
+}
 
 _always_inline void record_timestamp(struct timespec *timespec)
 {

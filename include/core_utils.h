@@ -26,6 +26,8 @@ struct Map *fmake_map(FILE *map_file);
 
 void print_map(const struct Map *map);
 
+void print_path(struct Map *map, int *path, int path_length);
+
 int msleep(long msec);
 
 #endif

@@ -1,10 +1,9 @@
-#include "core_utils.h"
 #include "min_heap.h"
 #include "dijkstra.h"
 
 _static_always_inline void resize_path(struct Path *path)
 {
-	if ((path->length << 1) < path->size)
+	if (!path || (path->length << 1) < path->size)
 		return;
 
 	path->size <<= 1;
@@ -32,6 +31,76 @@ _static_always_inline struct Path *new_path(int initial_size)
 	}
 
 	return path;
+}
+
+_static_always_inline
+void push_trace(struct Path *path, int *index, int _row, int _col)
+{
+	if (!path)
+		return;
+			
+	resize_path(path);
+
+	path->trace[*index] = _row;
+	path->trace[*index + 1] = _col;
+
+	path->length++;	
+	*index += 2;
+}
+
+_static_always_inline void copy_trace(struct Path *to, const struct Path *from, int offset)
+{
+	if (!to || !from)
+		return;
+
+	int index = to->length << 1;
+	
+	for (int i = offset; i < from->length; i++) {
+			
+		int row = from->trace[i << 1];
+		int col = from->trace[(i << 1) + 1];
+		
+		push_trace(to, &index, row, col);
+	}
+}
+
+_static_always_inline struct Path *copy_path(const struct Path *path)
+{
+	if (!path)
+		return NULL;
+
+	struct Path *copy = new_path(path->length);
+
+	if (!copy)
+		return NULL;
+
+	copy_trace(copy, path, 0);
+	copy->time_complexity = path->time_complexity;
+
+	return copy;
+}
+
+struct Path *concat_paths(const struct Path *path_a, const struct Path *path_b)
+{	
+	if (!path_a && !path_b)
+		return NULL;
+	
+	if (!path_a)
+		return copy_path(path_b);
+
+	if (!path_b)
+		return copy_path(path_a);
+
+	struct Path *concat = new_path(path_a->length + path_b->length);
+
+	if (!concat)
+		return NULL;
+	
+	copy_trace(concat, path_a, 0);
+	copy_trace(concat, path_b, 1);
+
+	concat->time_complexity = path_a->time_complexity + path_b->time_complexity;
+	return concat;
 }
 
 _static_always_inline
@@ -87,8 +156,8 @@ _static_always_inline void set_priority(struct Node *previous, struct Node *node
 
 _static_always_inline void reset_priorities(struct Graph *graph)
 {
-	for (register int i = 0; i < graph->rows; i++) {
-		for (register int j = 0; j < graph->cols; j++) {
+	for (int i = 0; i < graph->rows; i++) {
+		for (int j = 0; j < graph->cols; j++) {
 			
 			if (is_dummy_node(graph->nodes[i][j]))
 				continue;
@@ -106,8 +175,7 @@ _static_always_inline struct Path *reconstruct_path(struct Node *node)
 	if (!node || !path)
 		return NULL;
 
-	int row = 0;
-	int col = 1;
+	int index = 0;
 
 	struct Node *current = node;
 	struct Node *previous = node;
@@ -117,23 +185,15 @@ _static_always_inline struct Path *reconstruct_path(struct Node *node)
 		int distance = calc_raw_distance(previous, current);
 		int dir = get_direction(previous, current);
 
-		int _row = previous->row;
-		int _col = previous->col;
+		int row = previous->row;
+		int col = previous->col;
 		
 		for (int i = 0; i < distance; i++) {	
 			
-			resize_path(path);
-
-			path->trace[row] = _row;
-			path->trace[col] = _col;
-
-			row += 2;
-			col += 2;
-			
-			path->length++;
+			push_trace(path, &index, row, col);
 			path->time_complexity++;
 
-			offset_pos(dir, &_row, &_col);
+			offset_pos(dir, &row, &col);
 		}
 		
 		if (previous->span > 1)
@@ -142,13 +202,8 @@ _static_always_inline struct Path *reconstruct_path(struct Node *node)
 		previous = current;
 		current = current->previous;
 	}
-
-	resize_path(path);
-
-	path->trace[row] = previous->row;
-	path->trace[col] = previous->col;
-
-	path->length++;
+	
+	push_trace(path, &index, previous->row, previous->col);
 	path->time_complexity += previous->span;
 
 	return path;
@@ -161,12 +216,9 @@ struct Path *find_shortest_path(struct Graph *graph, int start[2], int dest[2])
 	if (!heap || !graph)
 		return NULL;
 	
-	bool *visited = (bool *) calloc(graph->rows * graph->cols, sizeof(bool));
+	bool visited[graph->rows * graph->cols];
 
-	if (!visited) {
-		PERROR_MALLOC;
-		return NULL;
-	}
+	memset(visited, 0, sizeof(bool) * graph->rows * graph->cols);
 
 	reset_priorities(graph);
 	graph->nodes[start[0]][start[1]].priority = 0;
@@ -201,32 +253,5 @@ struct Path *find_shortest_path(struct Graph *graph, int start[2], int dest[2])
 	}
 	
 	free(heap);
-	free(visited);
 	return reconstruct_path(node);
-}
-
-void print_path(struct Map *map, struct Path *path)
-{
-	if (!map || !path)
-		return;
-	
-	struct Map *copy = copy_map(map);
-
-	if (!copy)
-		return;
-	
-	printf(">> Path:\n\tLength: %d\n\tTime complexity: %d\n",
-			path->length, path->time_complexity);
-
-	for (int i = 0; i < path->length; i++) {
-
-		int row = path->trace[(i << 1)];
-		int col = path->trace[(i << 1) + 1];
-		
-		if (copy->cells[row][col] != DRAKE && copy->cells[row][col] != PRINCESS)
-			copy->cells[row][col] = PATH;
-	}
-
-	print_map(copy);
-	free_map(copy);
 }

@@ -7,6 +7,10 @@
 
 #define MSG_MAP_NSPEC 		"Map file not specified.\n"
 #define MSG_INTERACTIVE 	"Switching to interactive mode...\n"
+#define MSG_PRINCESSES_SAVED	"Princesses have been successfully rescued!\nHere is the path that our Hero took during his adventure\n"
+#define MSG_PATH_TRACE		"Coordinates of his path step by step...\n"
+#define MSG_PATH_MAP		"Hero's path on the map:\n"
+#define MSG_MISSION_FAILURE	"Rescue mission has failed...\n"
 
 /* Commands */
 

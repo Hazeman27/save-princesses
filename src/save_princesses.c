@@ -79,10 +79,21 @@ static inline void scan_map_from_file(map_t *map)
 static void run_save_princesses(map_t *map)
 {
 	int path_length;
-	save_princesses(*map, &path_length);
+	int *path = save_princesses(*map, &path_length);
 	
-	eprintf(ERR_MSG_COULD_NOT_SOLVE_MAP);
-	return;
+	if (!path) {
+		printf(MSG_MISSION_FAILURE);
+		return;
+	}
+
+	printf(MSG_PRINCESSES_SAVED);
+	printf(MSG_PATH_TRACE);
+
+	for (int i = 0; i < path_length; i++)
+		printf("%d %d\n", path[i << 1], path[(i << 1) + 1]);
+	
+	printf("\n" MSG_PATH_MAP);
+	print_path(*map, path, path_length);
 }
 
 static void run_print_map(map_t *map)
