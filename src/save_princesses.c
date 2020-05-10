@@ -24,8 +24,6 @@ static inline void run_generate_map(map_t *map)
        	int cols;
        	int drake_wake_time;
 	
-	printf(MSG_ENTER_NUM_ROWS_COLS);
-
 	if (scanf("%d %d", &rows, &cols) != 2) {
 		eprintf(ERR_MSG_SCANF);
 		return;		
@@ -35,8 +33,6 @@ static inline void run_generate_map(map_t *map)
 		eprintf(ERR_MSG_NEG_VAL);
 		return;
 	}
-
-	printf(MSG_ENTER_DRAKE_WAKE_T);
 
 	if (scanf("%d", &drake_wake_time) != 1) {
 		eprintf(ERR_MSG_SCANF);
@@ -79,7 +75,7 @@ static inline void scan_map_from_file(map_t *map)
 static void run_save_princesses(map_t *map)
 {
 	int path_length;
-	int *path = save_princesses(*map, &path_length);
+	int *path = save_princesses(*map, &path_length, false);
 	
 	if (!path) {
 		printf(MSG_MISSION_FAILURE);
@@ -89,9 +85,14 @@ static void run_save_princesses(map_t *map)
 	printf(MSG_PRINCESSES_SAVED);
 	printf(MSG_PATH_TRACE);
 
-	for (int i = 0; i < path_length; i++)
-		printf("%d %d\n", path[i << 1], path[(i << 1) + 1]);
-	
+	for (int i = 0; i < path_length; i++) {
+		
+		int row = path[i << 1];
+		int col = path[(i << 1) + 1];
+		
+		printf("%d %d\n", row, col);
+	}
+
 	printf("\n" MSG_PATH_MAP);
 	print_path(*map, path, path_length);
 }

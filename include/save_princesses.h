@@ -11,6 +11,7 @@
 #define MSG_PATH_TRACE		"Coordinates of his path step by step...\n"
 #define MSG_PATH_MAP		"Hero's path on the map:\n"
 #define MSG_MISSION_FAILURE	"Rescue mission has failed...\n"
+#define MSG_TIME_COMPLEXITY	"Time complexity of the path: "
 
 /* Commands */
 
@@ -22,7 +23,7 @@
 #define CMD_SYM_QUIT 		'q'
 
 #define CMD_1 "1. Print commands      [h]."
-#define CMD_2 "2. Generate map        [g]."
+#define CMD_2 "2. Generate map        [g [rows] [cols] [drake_t]."
 #define CMD_3 "3. Enter map file path [f [filepath]]."
 #define CMD_4 "4. Print current map   [p]."
 #define CMD_5 "5. Save princesses     [s]."
