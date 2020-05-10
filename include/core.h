@@ -16,5 +16,21 @@ void print_map(const map_t map);
 
 void print_path(map_t map, int *path, int path_length);
 
+/**
+ * This function name is mandatory due to this being a university project. Despite that,
+ * it pains me that I have to incorporate Slovak language into my code...
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * This function name, it hurts me deeply,
+ * Despair and sorrow fills my soul,
+ * Al least, let my ashes speak freely,
+ * Why can't I rename this evil spawn?
+ *
+ * - A Lone Coder, 2020
+ */
+
+int *zachran_princezne(char **mapa, int n, int m, int t, int *dlzka_cesty);
+
 #endif
 

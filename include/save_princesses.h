@@ -11,6 +11,7 @@
 #define MSG_PATH_TRACE		"Coordinates of his path step by step...\n"
 #define MSG_PATH_MAP		"Hero's path on the map:\n"
 #define MSG_MISSION_FAILURE	"Rescue mission has failed...\n"
+#define MSG_TIME_COMPLEXITY	"Time complexity of the path: "
 
 /* Commands */
 

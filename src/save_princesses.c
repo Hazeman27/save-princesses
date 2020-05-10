@@ -89,9 +89,14 @@ static void run_save_princesses(map_t *map)
 	printf(MSG_PRINCESSES_SAVED);
 	printf(MSG_PATH_TRACE);
 
-	for (int i = 0; i < path_length; i++)
-		printf("%d %d\n", path[i << 1], path[(i << 1) + 1]);
-	
+	for (int i = 0; i < path_length; i++) {
+		
+		int row = path[i << 1];
+		int col = path[(i << 1) + 1];
+		
+		printf("%d %d\n", row, col);
+	}
+
 	printf("\n" MSG_PATH_MAP);
 	print_path(*map, path, path_length);
 }
