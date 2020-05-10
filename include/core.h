@@ -11,7 +11,7 @@ map_t fmake_map(FILE *map_file);
 
 void free_map(map_t map);
 
-int *save_princesses(map_t map, int *path_length, bool reverse_axis);
+int *save_princesses(map_t map, int *path_length, bool reverse_axis, bool verbose);
 
 void print_map(const map_t map);
 
@@ -25,7 +25,7 @@ void print_path(map_t map, int *path, int path_length);
  *
  * This function name, it hurts me deeply,
  * Despair and sorrow fills my soul,
- * Al least, let my ashes speak freely,
+ * At least, let my ashes speak freely,
  * Why can't I rename this evil spawn?
  *
  * - A Lone Coder, 2020

@@ -75,7 +75,7 @@ static inline void scan_map_from_file(map_t *map)
 static void run_save_princesses(map_t *map)
 {
 	int path_length;
-	int *path = save_princesses(*map, &path_length, false);
+	int *path = save_princesses(*map, &path_length, false, true);
 	
 	if (!path) {
 		printf(MSG_MISSION_FAILURE);

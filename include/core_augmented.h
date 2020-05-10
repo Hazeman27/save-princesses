@@ -92,6 +92,6 @@ _always_inline long calc_delta_time(struct timespec start, struct timespec end) 
 	return end.tv_nsec - start.tv_nsec;
 }
 
-int *save_princesses(struct Map *map, int *path_length, bool reverse_axis);
+int *save_princesses(struct Map *map, int *path_length, bool reverse_axis, bool verbose);
 
 #endif
