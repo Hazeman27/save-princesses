@@ -95,6 +95,8 @@ static void run_save_princesses(map_t *map)
 
 	printf("\n" MSG_PATH_MAP);
 	print_path(*map, path, path_length);
+	
+	free(path);
 }
 
 static void run_print_map(map_t *map)

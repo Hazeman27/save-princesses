@@ -123,10 +123,28 @@ static void generate_map_test(int rows, int cols, int drake_wake_time, bool verb
 	free_map(map);
 }
 
-static void save_princesses_test(bool verbose)
+_static_always_inline void copy_cells(struct Map *map, char *cells[], int rows, int cols)
 {
-	if (verbose)
+}
+
+static void save_princesses_test(
+		char *cells[],
+		int rows,
+		int cols,
+		int drake_t,
+		int expected_path_length,
+		bool verbose)
+{
+	if (verbose) {
 		print_test_label(__func__);
+		printf(TEST_ARGS_LABEL);
+		print_var(cells, ",\n");
+		print_var(rows, ",\n");
+		print_var(cols, ",\n");
+		print_var(drake_t, ",\n");
+		print_var(expected_path_length, "\n");
+		printf(SEPARATOR);
+	}
 
 	struct Map *map = generate_map(10, 10, 0);
 	assert(map);
@@ -136,26 +154,24 @@ static void save_princesses_test(bool verbose)
 	
 	assert(!path && !path_length);
 	free_map(map);
-
-	char **cells = (char **) malloc(sizeof(char *) * 3);
 	
-	cells[0] = "CCCCC";
-	cells[1] = "CCDCC";
-	cells[2] = "CPCPC";
+	map = new_map(rows, cols, drake_t);
 	
-	map = new_map(3, 5, 4);
-	assert(map);
-	
-	for (int i = 0; i < 3; i++)
-		memmove(map->cells[i], cells[i], sizeof(char) * 5);
+	assert(map);	
+	for (int i = 0; i < rows; i++)
+		for (int j = 0; j < cols; j++)
+			map->cells[i][j] = cells[i][j];
 
 	path = save_princesses(map, &path_length, false, verbose);
-	assert(path && path_length == 8);
+	assert(path && path_length == expected_path_length);
 
-	if (verbose)
+	if (verbose) {
 		print_path(map, path, path_length);
-
+		printf(SEPARATOR);
+	}
+	
 	free_map(map);
+	free(path);
 }
 
 static void run_3int_arg_test(struct _run_3int_test_args args, int argc, ...)
@@ -222,7 +238,26 @@ _static_always_inline void run_scenarios(bool verbose)
 		verbose
 	}, 2, 4, 7, 7, 12, 34, 27);
 
-	save_princesses_test(verbose);
+
+	char **cells_a = (char **) malloc(sizeof(char *) * 3);
+	assert(cells_a);
+
+	cells_a[0] = "CCCCC";
+	cells_a[1] = "CCDCC";
+	cells_a[2] = "CPCPC";
+
+	save_princesses_test(cells_a, 3, 5, 4, 8, verbose);
+
+	char **cells_b = (char **) malloc(sizeof(char *) * 5);
+	assert(cells_b);
+
+	cells_b[0] = "CNHHDP";
+	cells_b[1] = "CCCCCC";
+	cells_b[2] = "CCCNCC";
+	cells_b[3] = "CHHNHH";
+	cells_b[4] = "CHHNNC";
+
+	save_princesses_test(cells_b, 5, 6, 7, 8, verbose);
 }
 
 int main(int argc, char **argv)

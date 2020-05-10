@@ -173,11 +173,14 @@ int *save_princesses(struct Map *map, int *path_length, bool reverse_axis, bool 
 		
 		if (verbose)
 			printf(PRINCESS_PATH_NOT_FOUND);
+		
+		free_rescue_mission(mission);
+		
+		*path_length = to_drake->length;
+		int *trace = extract_trace(to_drake, reverse_axis);
 
 		free_path(to_drake);
-		free_rescue_mission(mission);
-
-		goto mission_failed;
+		return trace;
 	}
 	
 	if (verbose)

@@ -228,7 +228,7 @@ struct Path *find_shortest_path(struct Graph *graph, int start[2], int dest[2])
 			
 			int priority = node->priority + calc_distance(node, neigh);
 
-			if (priority < neigh->priority) {	
+			if (priority < neigh->priority) {
 				set_priority(node, neigh);
 				insert(heap, neigh);
 			}

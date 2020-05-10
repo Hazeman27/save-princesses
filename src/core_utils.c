@@ -30,14 +30,18 @@ _static_always_inline bool fscan_map(FILE *map_file, struct Map *map)
 	return true;
 }
 
+void free_cells(char *cells[], int rows)
+{
+	for (int i = 0; i < rows; i++)
+		free(cells[i]);
+}
+
 void free_map(struct Map *map)
 {
 	if (!map)
 		return;
 
-	for (int i = 0; i < map->rows; i++)
-		free(map->cells[i]);
-	
+	free_cells(map->cells, map->rows);
 	free(map);
 }
 
@@ -186,29 +190,4 @@ void print_path(struct Map *map, int *path, int path_length)
 
 	print_map(copy);
 	free_map(copy);
-}
-
-/**
- * Thread sleep in miliseconds function. Implementation by 'caf'
- * https://stackoverflow.com/a/1157217/13391945
- */
-
-int msleep(long msec)
-{
-	struct timespec ts;
-	int res;
-
-	if (msec < 0) {
-		errno = EINVAL;
-		return -1;
-	}
-
-	ts.tv_sec = msec / 1000;
-	ts.tv_nsec = (msec % 1000) * 1000000;
-
-	do {
-		res = nanosleep(&ts, &ts);
-	} while (res && errno == EINTR);
-
-	return res;
 }
