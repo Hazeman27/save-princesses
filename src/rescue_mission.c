@@ -35,7 +35,7 @@ _static_always_inline bool is_junction(struct Map *map, int row, int col)
 
 _static_always_inline bool is_node_cell(struct Map *map, int row, int col)
 {
-	return map->rows == 1 || (!row && !col)	||
+	return (!row && !col)	||
 		is_junction(map, row, col) 	||
 		is_bush(map, row, col) 		||
 		is_princess(map, row, col)	||

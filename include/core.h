@@ -2,6 +2,7 @@
 #define SAVE_PRINCESSES_CORE_H
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <time.h>
 
 typedef struct Map *map_t;
@@ -10,7 +11,7 @@ map_t fmake_map(FILE *map_file);
 
 void free_map(map_t map);
 
-int *save_princesses(map_t map, int *path_length);
+int *save_princesses(map_t map, int *path_length, bool reverse_axis);
 
 void print_map(const map_t map);
 

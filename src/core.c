@@ -112,7 +112,7 @@ int *save_princesses(struct Map *map, int *path_length, bool reverse_axis)
 {
 	if (!map)
 		goto mission_failed;	
-
+	
 	struct timespec start;
 	struct timespec end;
 
@@ -152,6 +152,8 @@ int *save_princesses(struct Map *map, int *path_length, bool reverse_axis)
 
 		goto mission_failed;
 	}
+	
+	print_path(map, extract_trace(to_drake, false), to_drake->length);
 
 	print_delta_time(stdout, "Drake elimination", calc_delta_time(start, end));
 	record_timestamp(&start);
@@ -193,8 +195,8 @@ mission_failed:
 	return NULL;
 }
 
-int *zachran_princezne(char **mapa, int n, int m, int t, int *dlzka_cesty) {
-	
+int *zachran_princezne(char **mapa, int n, int m, int t, int *dlzka_cesty)
+{	
 	struct Map *map = new_map(n, m, t);
 	
 	if (!map) {
