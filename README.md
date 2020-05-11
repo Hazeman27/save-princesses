@@ -89,14 +89,6 @@ After launching, interaction tool will greet you with the commands list:
 | s                         | save princesses              |
 | q                         | exit program                 |
 
-
-### Data Structures And Algorithms Involved
-
-Project contains implementations of Dijkstra's shortest path algorithm (SPA), min-heap,
-and stack. Min-heap and Dijkstra's SPA are used to solve mazes: kill the dragon
-and save the princesses before the dragon wakes up. Stack is used for generating maps
-for testing purposes.
-
 ### Compilation
 
 You can compile program with the provided `Makefile`. It will compile `save_princesses`
@@ -107,7 +99,7 @@ and `gcc` installed on your system, then simply run:
 $ make
 ```
 
-If you wish to run provided tests scenarios, you can compile them by providing additional
+If you wish to run provided test scenarios, you can compile them by providing additional
 argument `tests` to the make:
 
 ```
@@ -124,6 +116,13 @@ $ out/tests --verbose
 ```
 
 This will run tests and output information about test functions to the console.
+
+### Data Structures And Algorithms Involved
+
+Project contains implementations of Dijkstra's shortest path algorithm (SPA), min-heap,
+and stack. Min-heap and Dijkstra's SPA are used to solve mazes: kill the dragon
+and save the princesses before the dragon wakes up. Stack is used for generating maps
+for testing purposes.
 
 ## Implementation
 
@@ -171,7 +170,7 @@ destination, in which case we just `break` out of the loop.
 
 Each iteration we extract (*pop*) the minimum value in our queue, which is always on the
 top, and check if it is our destination. If yes, then we exit the loop. Otherwise we check
-its neighbours, and if they were not visited, we compute their priority relative to to the
+its neighbours, and if they were not visited, we compute their priority relative to the
 current node, and if it is less then their current priority, we update them and insert
 them into our queue:
 
@@ -232,11 +231,11 @@ static void permute(int targets[][2], int start, int targetsc, int results[][2],
 }
 ```
 
-This algorithm takes `O(2 * N * N!)` time, where `N` is the amount target coordinates.
-Then, for each of these permutations we find the shortest paths with Dijkstra's algorithm. 
+This algorithm takes `O(2 * N * N!)` time, where `N` is the amount of target coordinates.
+Then, for each of these permutations we find the shortest path with Dijkstra's algorithm. 
 
 Dijkstra's SPA has time complexity of `O(|V|+|E| * log|V|)` (where `|V|` is the number of
-nodes and `|E|` is the number of edges). Combined with our permutations, and initialiazation
+nodes and `|E|` is the number of edges). Combined with our permutations and initialiazation
 time of the Dijkstra's algorithm, this gives us
 `O(2 * P * P! + P! * P * ((|V| + |E| * log|V|) + L + M))`, where `P` is the amount of
 princesses. `L + M` is the time it takes to concatenate two paths, where `L` is the amount
@@ -248,7 +247,7 @@ items, In the worst case, it makes `O(N^2)` comparisons. So if we take the worst
 scenario, then our program will take
 `O(2 * P * P! + P! * P * ((|V| + 4 * log|V|) + L + M) + O(N!^2))` time to compute the
 best path. `4` is the maximum amount of edges that node may have in the *Manhattan* like
-paths, which is exactly the case with our maze.
+paths, which is exactly the case with our mazes.
 
 Each node of the graph has a structure:
 
@@ -276,7 +275,7 @@ will produce only 3 nodes: starting node, dragon node, princesses node.
 ### Map Generation
 
 Map generation is realized through simple algorithm with stack. Simply put, we just walk
-entire map by pushing each coordinate onto stack. If we encounter a dead end, we can easily
+entire map by pushing each coordinate onto stack. If we've encounter a dead end, we can easily
 backtrack by popping coordinates from the stack. There isn't really much to stay about
 the logic of this algorithm, more challenging part (*at least for me*) is to create walls
 between paths. The most important bit is this `while` loop:
@@ -300,23 +299,23 @@ between paths. The most important bit is this `while` loop:
 ```
 
 Similar to searching paths, we keep track of the visited nodes. We keep traversing the
-map until we backtrack all the way to the beginning of the map, i.e. the stack is empty.
-So in that fashion, this loop is a bit similar to Dijkstra's SPA main loop.
+map until we backtrack all the way back to the beginning of the map, i.e. the stack is empty.
+So in that regard, this loop is a bit similar to Dijkstra's SPA main loop.
 
 ## Testing
 
 Testing was realized through custom and random generated maps. Custom maps were taken
 from this [source](https://drive.google.com/drive/folders/1aPOqsTCRHPG48I17CX5rIJt0-sus9-An).
 
-Here are some testing results:
+Here are some of the testing results:
 
 | Map size | Princesses count | Distance to dragon | Time to slay dragon  | Time to save princesses| Path time complexity |
 |----------|------------------|--------------------|----------------------|------------------------|----------------------|
 | 10 x 10  | 1                | 23				   | ~20000 ns            | ~8000 ns               | 53                   |
-| 20 x 20  | 1                | 16                 | ~12000 ns            | ~35700 ns			   | 39                   |
+| 20 x 20  | 1                | 16                 | ~12000 ns            | ~35700 ns			   | 39           |
 | 50 x 50  | 1                | 76                 | ~232000 ns           | ~250000 ns             | 148                  |
 | 100 x 100| 1                | 117                | ~360000 ns           | ~315000 ns             | 238                  |
-| 20 x 20  | 2                | 20                 | ~17700 ns            | ~67700 ns			   | 29                   |
+| 20 x 20  | 2                | 20                 | ~17700 ns            | ~67700 ns			   | 29           |
 | 50 x 50  | 2                | 3                  | ~47400 ns            | ~551300 ns             | 131                  |
 | 500 x 500| 2                | 644                | ~17508500 ns         | ~60907400 ns           | 1763                 |
 | 500 x 500| 3                | 580                | ~13010900 ns         | ~230075800 ns          | 1558                 |
