@@ -224,8 +224,6 @@ struct Path *find_shortest_path(struct Graph *graph, int start[2], int dest[2])
 			}
 		}
 		
-		print_heap(heap, 0, 0);
-		putchar('\n');
 		visited[node->row * graph->cols + node->col] = true;
 	}
 	
