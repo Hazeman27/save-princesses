@@ -4,6 +4,7 @@
 #include "rescue_mission.h"
 
 #define ERR_MSG_HEAP_OVERFLOW "Heap overflow"
+#define PRINT_INDENTATION 4
 
 struct Heap {
 	size_t size;
@@ -22,5 +23,7 @@ void min_heapify(struct Heap *heap);
 bool insert(struct Heap *heap, struct Node *node);
 
 struct Node *extract_min(struct Heap *heap);
+
+void print_heap(const struct Heap *heap, int index, int indent);
 
 #endif

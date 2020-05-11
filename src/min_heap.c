@@ -16,6 +16,10 @@ _static_always_inline int is_leaf(struct Heap *heap, int index) {
 	return index >= (heap->size >> 1) && index <= heap->size;
 }
 
+_static_always_inline int _indent(int current_indent) {
+	return current_indent + PRINT_INDENTATION;
+}
+
 _static_always_inline void swap(struct Node **node_a, struct Node **node_b)
 {
 	struct Node *tmp = *node_a;
@@ -106,4 +110,22 @@ struct Node *extract_min(struct Heap *heap)
 
 	heapify(heap, 0);
 	return node;
+}
+
+void print_heap(const struct Heap *heap, int index, int indent)
+{
+	if (!heap || index >= heap->size)
+		return;
+
+	for (int i = 0; i < indent; i++) {
+		if ((i + 1) % PRINT_INDENTATION)
+			putchar(' ');
+		else putchar('|');
+	}
+	
+	putchar('-');
+	printf("[%d]\n", heap->nodes[index]->priority);
+
+	print_heap(heap, lchild_i(index), _indent(indent));
+	print_heap(heap, rchild_i(index), _indent(indent));
 }

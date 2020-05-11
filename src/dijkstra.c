@@ -1,18 +1,15 @@
 #include "min_heap.h"
 #include "dijkstra.h"
 
-_static_always_inline
-struct Cell make_cell(char span, int row, int col) {
+_static_always_inline struct Cell make_cell(char span, int row, int col) {
 	return (struct Cell) { span, row, col };
 }
 
-_static_always_inline
-struct Cell extract_cell(const struct Node *node) {
+_static_always_inline struct Cell extract_cell(const struct Node *node) {
 	return (struct Cell) { node->span, node->row, node->col };
 }
 
-_static_always_inline
-void resize_path(struct Path *path)
+_static_always_inline void resize_path(struct Path *path)
 {
 	if (!path || (path->length << 1) < path->size)
 		return;
@@ -22,8 +19,7 @@ void resize_path(struct Path *path)
 			path->cells, sizeof(struct Cell) * (path->size));
 }
 
-_static_always_inline
-struct Path *new_path(int initial_size)
+_static_always_inline struct Path *new_path(int initial_size)
 {
 	struct Path *path = (struct Path *) malloc(sizeof(struct Path));
 
@@ -46,8 +42,7 @@ struct Path *new_path(int initial_size)
 	return path;
 }
 
-_static_always_inline
-void push_cell(struct Path *path, int *index, struct Cell cell)
+_static_always_inline void push_cell(struct Path *path, int *index, struct Cell cell)
 {
 	if (!path)
 		return;
@@ -61,8 +56,7 @@ void push_cell(struct Path *path, int *index, struct Cell cell)
 	(*index)++;
 }
 
-_static_always_inline
-void copy_cells(struct Path *to, const struct Path *from, int offset)
+_static_always_inline void copy_cells(struct Path *to, const struct Path *from, int offset)
 {
 	if (!to || !from)
 		return;
@@ -73,8 +67,7 @@ void copy_cells(struct Path *to, const struct Path *from, int offset)
 		push_cell(to, &index, from->cells[i]);
 }
 
-_static_always_inline
-struct Path *copy_path(const struct Path *path)
+_static_always_inline struct Path *copy_path(const struct Path *path)
 {
 	if (!path)
 		return NULL;
@@ -130,8 +123,7 @@ int get_direction(const struct Node *node_a, const struct Node *node_b)
 	return -1;
 }
 
-_static_always_inline
-void set_priority(struct Node *previous, struct Node *node)
+_static_always_inline void set_priority(struct Node *previous, struct Node *node)
 {
 	if (!previous || !node)
 		return;
@@ -140,8 +132,7 @@ void set_priority(struct Node *previous, struct Node *node)
 	node->previous = previous;
 }
 
-_static_always_inline
-void reset_priorities(struct Graph *graph)
+_static_always_inline void reset_priorities(struct Graph *graph)
 {
 	for (int i = 0; i < graph->rows; i++) {
 		for (int j = 0; j < graph->cols; j++) {
@@ -155,8 +146,7 @@ void reset_priorities(struct Graph *graph)
 	}
 }
 
-_static_always_inline
-struct Path *reconstruct_path(struct Node *node)
+_static_always_inline struct Path *reconstruct_path(struct Node *node)
 {
 	struct Path *path = new_path(PATH_INITIAL_SIZE);
 	
@@ -233,7 +223,9 @@ struct Path *find_shortest_path(struct Graph *graph, int start[2], int dest[2])
 				insert(heap, neigh);
 			}
 		}
-
+		
+		print_heap(heap, 0, 0);
+		putchar('\n');
 		visited[node->row * graph->cols + node->col] = true;
 	}
 	
