@@ -82,10 +82,11 @@ static struct Path *permute_princesses_paths(struct Rescue_Mission *mission)
 	int princesses_count = mission->princesses_count;
 
 	int permutations[permutations_count * princesses_count][2];
-
 	struct Path *paths[permutations_count];
+
 	int offset = 0;
-	
+	int min_index = 0;
+
 	permute(mission->princesses_pos, 0, princesses_count, permutations, &offset);
 		
 	for (int i = 0; i < permutations_count; i++) {
@@ -109,10 +110,12 @@ static struct Path *permute_princesses_paths(struct Rescue_Mission *mission)
 
 			paths[i] = concat;
 		}
+
+		if (paths[i]->time_complexity < paths[min_index]->time_complexity)
+			min_index = i;
 	}
 
-	qsort(paths, permutations_count, sizeof(struct Path *), compare_paths);
-	return paths[0];
+	return paths[min_index];
 }
 
 int *save_princesses(struct Map *map, int *path_length, bool reverse_axis, bool verbose)
