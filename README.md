@@ -231,6 +231,8 @@ static void permute(int targets[][2], int start, int targetsc, int results[][2],
 }
 ```
 
+> Note: this algorithm is taken from [www.geeksforgeeks.com](https://www.geeksforgeeks.org/write-a-c-program-to-print-all-permutations-of-a-given-string/).
+
 This algorithm takes `O(2 * N * N!)` time, where `N` is the amount of target coordinates.
 Then, for each of these permutations we find the shortest path with Dijkstra's algorithm. 
 
