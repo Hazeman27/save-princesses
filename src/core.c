@@ -46,6 +46,13 @@ _static_always_inline int factorial(int n)
 	return result;
 }
 
+/**
+ * This permutation algorithm is taken from this source:
+ * https://www.geeksforgeeks.org/write-a-c-program-to-print-all-permutations-of-a-given-string/
+ * 
+ * Credit goes to its authors: Mithun Kumar, ArindamDuttagupta, rathbhupendra 
+ */
+
 static void permute(int targets[][2], int start, int targetsc, int results[][2], int *offset) 
 { 
 	if (start == targetsc) {
